@@ -5,6 +5,7 @@ export const loginStyle = StyleSheet.create({
       flex: 1,
       backgroundColor: '#fff',
       alignItems: 'center',
+      width: '100%'
     },
     logoBox: {
       flexDirection: 'row',
@@ -18,20 +19,22 @@ export const loginStyle = StyleSheet.create({
       justifyContent: 'center'
     },
     customInput: {
-      backgroundColor: 'lightgray',
+      borderColor: 'black',
+      borderWidth: 1,
+      borderRadius: 5,
       color: 'black',
       fontSize: 20,
       fontWeight: 'bold',
       width: '75%',
-      height: 32,
+      height: 48,
       marginTop: 16,
-      paddingLeft: 5
+      paddingLeft: 16,
     },
     standartButton: {
-        backgroundColor: 'blue',
+        backgroundColor: '#1351B4',
         paddingHorizontal: 16,
         paddingVertical: 12,
-        borderRadius: 6,
+        borderRadius: 24,
         marginVertical: 16
     }
   });
