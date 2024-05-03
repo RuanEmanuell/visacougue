@@ -1,25 +1,26 @@
-import { loginStyleheet, Text, View, SafeAreaView, TextInput, Pressable } from 'react-native';
-import { useState } from 'react';
+import { Text, View, SafeAreaView, TextInput, Pressable } from 'react-native';
+import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { loginStyle } from '../../styles/login';
-import { signInWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
 import { auth, googleProvider } from '../../utils/firebaseconfig';
 import { Snackbar } from 'react-native-paper';
+import DSGovButton from '../../components/button';
 
-export default function LoginScreen({ navigation }) {
+export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ errorMessage: "", errorVisible: false })
 
-  async function loginUser() {
+  async function registerUser() {
     if (verifyPasswordAndEmail()) {
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, email, password);
       } catch (error) {
-        console.log(error);
-        if(error.code == 'auth/invalid-credential'){
-          setErrorMessage({ errorMessage: 'Credenciais do usuário inválidas!', errorVisible: true });
+        if(error.code == 'auth/email-already-in-use'){
+          setErrorMessage({ errorMessage: 'Email já está em uso!', errorVisible: true });
         }else {
           setErrorMessage({ errorMessage: `Ocorreu um erro: ${error}`, errorVisible: true });
         }
@@ -43,6 +44,9 @@ export default function LoginScreen({ navigation }) {
     } else if (password.length < 6) {
       setErrorMessage({ errorMessage: "Senha deve conter pelo menos 6 caracteres!", errorVisible: true });
       return false;
+    } else if (password != confirmPassword) {
+      setErrorMessage({ errorMessage: "Senha e confirmação de senha devem ser iguais!", errorVisible: true });
+      return false;
     } else {
       setErrorMessage({ errorMessage: "", errorVisible: false });
       return true;
@@ -55,7 +59,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={{ color: 'red', fontWeight: 'bold', fontSize: 48 }}>Açougue</Text>
       </View>
       <View style={loginStyle.loginBox}>
-        <Text style={{ fontWeight: 'bold', fontSize: 36 }}>Login</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 36 }}>Criar sua conta</Text>
         <TextInput
           placeholder='Digite seu email'
           onChangeText={text => setEmail(text)}
@@ -65,19 +69,22 @@ export default function LoginScreen({ navigation }) {
           onChangeText={text => setPassword(text)}
           secureTextEntry={!passwordVisible}
           style={loginStyle.customInput}></TextInput>
-        <Pressable style={loginStyle.standartButton}>
-          <Text style={{ color: 'white', fontWeight: 'bold' }} onPress={loginUser}>Fazer login</Text>
-        </Pressable>
+        <TextInput
+          placeholder='Confirme sua senha'
+          onChangeText={text => setConfirmPassword(text)}
+          secureTextEntry={!passwordVisible}
+          style={loginStyle.customInput}></TextInput>
+          <DSGovButton onClick={registerUser} label='Criar conta'></DSGovButton>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
           <Text style={{ paddingHorizontal: '5%', color: 'gray' }}>ou</Text>
           <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
         </View>
         <View style={{ margin: 16 }}>
-          <FontAwesome.Button name='google' style={{ paddingVertical: 16 }} onPress={loginGoogle}>Entrar com Google</FontAwesome.Button>
+          <FontAwesome.Button name='google' style={{ paddingVertical: 16 }} onPress={loginGoogle}>Criar com Google</FontAwesome.Button>
         </View>
-        <Pressable onPress={() => { navigation.navigate('register'); }}>
-          <Text style={{ color: '#1351B4', fontWeight: 'bold' }}>Ainda não tem uma conta? Criar uma conta</Text>
+        <Pressable onPress={() => { navigation.navigate('login'); }}>
+          <Text style={{ color: '#1351B4', fontWeight: 'bold' }}>Já tem uma conta? Fazer login</Text>
         </Pressable>
         <Snackbar 
         visible = {errorMessage.errorVisible}
