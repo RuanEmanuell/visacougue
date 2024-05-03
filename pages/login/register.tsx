@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/aut
 import { auth, googleProvider } from '../../utils/firebaseconfig';
 import { Snackbar } from 'react-native-paper';
 import DSGovButton from '../../components/button';
+import DSGovInput from '../../components/input';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -19,16 +20,16 @@ export default function RegisterScreen({ navigation }) {
       try {
         await createUserWithEmailAndPassword(auth, email, password);
       } catch (error) {
-        if(error.code == 'auth/email-already-in-use'){
+        if (error.code == 'auth/email-already-in-use') {
           setErrorMessage({ errorMessage: 'Email já está em uso!', errorVisible: true });
-        }else {
+        } else {
           setErrorMessage({ errorMessage: `Ocorreu um erro: ${error}`, errorVisible: true });
         }
       }
     }
   }
 
-  async function loginGoogle(){
+  async function loginGoogle() {
     try {
       await signInWithRedirect(auth, googleProvider);
     } catch (error) {
@@ -38,7 +39,7 @@ export default function RegisterScreen({ navigation }) {
   }
 
   function verifyPasswordAndEmail() {
-    if(!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)){
+    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       setErrorMessage({ errorMessage: "Email inválido!", errorVisible: true });
       return false;
     } else if (password.length < 6) {
@@ -60,21 +61,21 @@ export default function RegisterScreen({ navigation }) {
       </View>
       <View style={loginStyle.loginBox}>
         <Text style={{ fontWeight: 'bold', fontSize: 36 }}>Criar sua conta</Text>
-        <TextInput
+        <DSGovInput
           placeholder='Digite seu email'
-          onChangeText={text => setEmail(text)}
-          style={loginStyle.customInput}></TextInput>
-        <TextInput
+          onChangeText={text => setEmail(text)}>
+        </DSGovInput>
+        <DSGovInput
           placeholder='Digite sua senha'
           onChangeText={text => setPassword(text)}
-          secureTextEntry={!passwordVisible}
-          style={loginStyle.customInput}></TextInput>
-        <TextInput
+          secureTextEntry={!passwordVisible}>
+        </DSGovInput>
+        <DSGovInput
           placeholder='Confirme sua senha'
           onChangeText={text => setConfirmPassword(text)}
-          secureTextEntry={!passwordVisible}
-          style={loginStyle.customInput}></TextInput>
-          <DSGovButton onClick={registerUser} label='Criar conta'></DSGovButton>
+          secureTextEntry={!passwordVisible}>
+        </DSGovInput>
+        <DSGovButton onPress={registerUser} label='Criar conta' primary></DSGovButton>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
           <Text style={{ paddingHorizontal: '5%', color: 'gray' }}>ou</Text>
@@ -86,11 +87,11 @@ export default function RegisterScreen({ navigation }) {
         <Pressable onPress={() => { navigation.navigate('login'); }}>
           <Text style={{ color: '#1351B4', fontWeight: 'bold' }}>Já tem uma conta? Fazer login</Text>
         </Pressable>
-        <Snackbar 
-        visible = {errorMessage.errorVisible}
-        onDismiss={() => setErrorMessage({errorMessage:"", errorVisible: false})}
-        duration={5000}
-        style = {{backgroundColor: 'red'}}
+        <Snackbar
+          visible={errorMessage.errorVisible}
+          onDismiss={() => setErrorMessage({ errorMessage: "", errorVisible: false })}
+          duration={5000}
+          style={{ backgroundColor: 'red' }}
         >{errorMessage.errorMessage}</Snackbar>
       </View>
     </SafeAreaView>
