@@ -1,14 +1,14 @@
 import { Text, View, SafeAreaView, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { loginStyle } from '../../styles/login';
-import { createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
-import { auth, googleProvider } from '../../utils/firebaseconfig';
+import { loginStyle } from '../styles/login';
+import { User, UserCredential, createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
+import { auth, googleProvider } from '../utils/firebaseconfig';
 import { Snackbar } from 'react-native-paper';
-import DSGovButton from '../../components/button';
-import DSGovInput from '../../components/input';
+import DSGovButton from '../components/button';
+import DSGovInput from '../components/input';
 
-export default function RegisterScreen({ navigation }) {
+export default function RegisterScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,7 +18,9 @@ export default function RegisterScreen({ navigation }) {
   async function registerUser() {
     if (verifyPasswordAndEmail()) {
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const UserCredentials : UserCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user : User = UserCredentials.user;
+        navigation.navigate('home', {user});
       } catch (error) {
         if (error.code == 'auth/email-already-in-use') {
           setErrorMessage({ errorMessage: 'Email já está em uso!', errorVisible: true });
@@ -80,9 +82,6 @@ export default function RegisterScreen({ navigation }) {
           <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
           <Text style={{ paddingHorizontal: '5%', color: 'gray' }}>ou</Text>
           <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
-        </View>
-        <View style={{ margin: 16 }}>
-          <FontAwesome.Button name='google' style={{ paddingVertical: 16 }} onPress={loginGoogle}>Criar com Google</FontAwesome.Button>
         </View>
         <Pressable onPress={() => { navigation.navigate('login'); }}>
           <Text style={{ color: '#1351B4', fontWeight: 'bold' }}>Já tem uma conta? Fazer login</Text>
