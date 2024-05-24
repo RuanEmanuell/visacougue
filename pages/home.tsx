@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { User } from 'firebase/auth';
 
 export default function HomeScreen({route}) {
-  const user = route.params;
+  const user : User = route.params;
   return (
     <SafeAreaView>
       <View>

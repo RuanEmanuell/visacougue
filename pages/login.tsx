@@ -17,12 +17,17 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   async function loginUser() {
     if (verifyPasswordAndEmail()) {
       try {
-        const UserCredentials : UserCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user : User = UserCredentials.user;
-        navigation.navigate('home', {user});
+        const userCredentials: UserCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user: User = userCredentials.user;
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+        };
+        navigation.navigate('home', { user: userData });
       } catch (error) {
         console.log(error);
-        if (error.code == 'auth/invalid-credential') {
+        if (error.code === 'auth/invalid-credential') {
           setErrorMessage({ errorMessage: 'Credenciais do usuário inválidas!', errorVisible: true });
         } else {
           setErrorMessage({ errorMessage: `Ocorreu um erro: ${error}`, errorVisible: true });
@@ -30,6 +35,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       }
     }
   }
+  
 
   async function loginGoogle() {
     try {

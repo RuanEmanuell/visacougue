@@ -18,9 +18,14 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
   async function registerUser() {
     if (verifyPasswordAndEmail()) {
       try {
-        const UserCredentials : UserCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user : User = UserCredentials.user;
-        navigation.navigate('home', {user});
+        const UserCredentials: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user: User = UserCredentials.user;
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+        };
+        navigation.navigate('home', { userData });
       } catch (error) {
         if (error.code == 'auth/email-already-in-use') {
           setErrorMessage({ errorMessage: 'Email já está em uso!', errorVisible: true });
