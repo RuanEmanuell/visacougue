@@ -1,6 +1,5 @@
 import { Text, View, SafeAreaView, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { loginStyle } from '../styles/login';
 import { User, UserCredential, signInWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
 import { auth, googleProvider } from '../utils/firebaseconfig';
