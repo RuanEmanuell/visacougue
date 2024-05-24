@@ -10,6 +10,12 @@ export const homeStyle = StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'center',
       width: '100%'
+    },
+    userCircle : {
+      borderColor: 'black',
+      borderWidth: 4,
+      borderRadius: windowWidth,
+      marginBottom: 12
     }
   });
   
