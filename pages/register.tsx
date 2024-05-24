@@ -7,6 +7,7 @@ import { auth, googleProvider } from '../utils/firebaseconfig';
 import { Snackbar } from 'react-native-paper';
 import DSGovButton from '../components/button';
 import DSGovInput from '../components/input';
+import UserData from '../utils/userdata';
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
       try {
         const UserCredentials: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user: User = UserCredentials.user;
-        const userData = {
+        const userData : UserData = {
           uid: user.uid,
           email: user.email,
           displayName: user.displayName,
