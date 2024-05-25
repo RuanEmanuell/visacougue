@@ -11,9 +11,10 @@ interface optionProps {
 
 export default function HomeOption({ onPress, label, color, icon }: optionProps) {
     const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
     return (
         <Pressable onPress={onPress}>
-        <View style={{ backgroundColor: color, width: windowWidth / 1.25, height: 72, margin: 18, display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ backgroundColor: color, width: windowWidth / 1.25, height: 72, display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ color: 'white', marginLeft: 12, fontWeight: 'bold', fontSize: 24 }}>{label}</Text>
             <MaterialIcons name={icon} color='white' size={32} style={{ marginRight: 12 }}></MaterialIcons>
         </View>

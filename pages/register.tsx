@@ -9,7 +9,7 @@ import DSGovInput from '../components/input';
 import UserData from '../utils/userdata';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 
-export default function RegisterScreen({ navigation }: { navigation: any }) {
+export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
