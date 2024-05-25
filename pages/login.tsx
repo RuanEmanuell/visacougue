@@ -7,6 +7,7 @@ import { Snackbar } from 'react-native-paper';
 import DSGovButton from '../components/button';
 import DSGovInput from '../components/input';
 import UserData from '../utils/userdata';
+import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
@@ -81,6 +82,9 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
           <Text style={{ paddingHorizontal: '5%', color: 'gray' }}>ou</Text>
           <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
+        </View>
+        <View style={{ margin: 16 }}>
+          <FontAwesome.Button name='google' style={{ paddingVertical: 16 }} onPress={loginGoogle}>Entrar com Google</FontAwesome.Button>
         </View>
         <Pressable onPress={() => { navigation.navigate('register'); }}>
           <Text style={{ color: '#1351B4', fontWeight: 'bold' }}>Ainda não tem uma conta? Criar uma conta</Text>
