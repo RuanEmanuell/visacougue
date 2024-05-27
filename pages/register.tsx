@@ -2,15 +2,17 @@ import { Text, View, SafeAreaView, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { loginStyle } from '../styles/login';
 import { User, UserCredential, createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
-import { auth, googleProvider } from '../utils/firebaseconfig';
+import { db, auth, googleProvider } from '../utils/firebaseconfig';
 import { Snackbar } from 'react-native-paper';
 import DSGovButton from '../components/button';
 import DSGovInput from '../components/input';
 import UserData from '../utils/userdata';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -20,12 +22,17 @@ export default function RegisterScreen({ navigation }) {
     if (verifyPasswordAndEmail()) {
       try {
         const UserCredentials: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
+
         const user: User = UserCredentials.user;
+
         const userData: UserData = {
           uid: user.uid,
           email: user.email,
-          displayName: user.displayName,
+          displayName: name
         };
+
+        await addUserToDB(userData);
+        
         navigation.navigate('home', { userData });
       } catch (error) {
         if (error.code == 'auth/email-already-in-use') {
@@ -34,6 +41,22 @@ export default function RegisterScreen({ navigation }) {
           setErrorMessage({ errorMessage: `Ocorreu um erro: ${error}`, errorVisible: true });
         }
       }
+    }
+  }
+
+  async function addUserToDB(userData: UserData) {
+    try {
+      const userId = userData.uid;
+
+      const userRef = doc(db, 'users', userId);
+      
+      await setDoc(userRef, {
+        name: userData.displayName,
+        email: userData.email,
+        type: 'user'
+      })
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -56,7 +79,10 @@ export default function RegisterScreen({ navigation }) {
     } else if (password != confirmPassword) {
       setErrorMessage({ errorMessage: "Senha e confirmação de senha devem ser iguais!", errorVisible: true });
       return false;
-    } else {
+    } else if (name.length < 5) {
+      setErrorMessage({ errorMessage: "Nome de usuário deve conter pelo menos 5 caracteres!", errorVisible: true });
+      return false;
+    }else {
       setErrorMessage({ errorMessage: "", errorVisible: false });
       return true;
     }
@@ -72,6 +98,10 @@ export default function RegisterScreen({ navigation }) {
         <DSGovInput
           placeholder='Digite seu email'
           onChangeText={text => setEmail(text)}>
+        </DSGovInput>
+        <DSGovInput
+          placeholder='Digite seu nome de usuário'
+          onChangeText={text => setName(text)}>
         </DSGovInput>
         <DSGovInput
           placeholder='Digite sua senha'

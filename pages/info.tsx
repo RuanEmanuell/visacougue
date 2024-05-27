@@ -8,7 +8,7 @@ import { db } from '../utils/firebaseconfig';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 
 export default function InfoScreen({ route, navigation }) {
-  const user: UserData = route.params['user'];
+  const user: UserData = route.params['userData'];
 
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
