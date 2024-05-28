@@ -7,8 +7,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import HomeOption from '../components/option';
 
 export default function HomeScreen({ route, navigation }) {
-  const user: UserData = route.params['userData'];
-
+  const user: UserData = route.params;
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 

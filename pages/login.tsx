@@ -8,14 +8,18 @@ import DSGovButton from '../components/button';
 import DSGovInput from '../components/input';
 import UserData from '../utils/userdata';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
+import LoadingCircle from '../components/loading';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ errorMessage: "", errorVisible: false })
+  const [loading, setLoading] = useState(false);
+
 
   async function loginUser() {
+    setLoading(true);
     if (verifyPasswordAndEmail()) {
       try {
         const userCredentials: UserCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -25,7 +29,7 @@ export default function LoginScreen({ navigation }) {
           email: user.email,
           displayName: user.displayName,
         };
-        navigation.navigate('home', { user: userData });
+        navigation.navigate('home', { userData });
       } catch (error) {
         console.log(error);
         if (error.code === 'auth/invalid-credential') {
@@ -35,6 +39,7 @@ export default function LoginScreen({ navigation }) {
         }
       }
     }
+    setLoading(false);
   }
   
 
@@ -66,6 +71,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={{ color: 'blue', fontWeight: 'bold', fontSize: 48 }}>Vis</Text>
         <Text style={{ color: 'red', fontWeight: 'bold', fontSize: 48 }}>Açougue</Text>
       </View>
+      {!loading ?
       <View style={loginStyle.loginBox}>
         <Text style={{ fontWeight: 'bold', fontSize: 36 }}>Login</Text>
         <DSGovInput
@@ -95,7 +101,7 @@ export default function LoginScreen({ navigation }) {
           duration={5000}
           style={{ backgroundColor: 'red' }}
         >{errorMessage.errorMessage}</Snackbar>
-      </View>
+      </View> : <LoadingCircle/>}
     </SafeAreaView>
   );
 }
