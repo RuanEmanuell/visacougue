@@ -4,6 +4,7 @@ import LoginScreen from './pages/login'
 import RegisterScreen from './pages/register';
 import HomeScreen from './pages/home';
 import InfoScreen from './pages/info';
+import AddScreen from './pages/add';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -23,8 +24,12 @@ export default function App() {
                     component={HomeScreen}
                     options={{ headerShown: false }} />
                 <Stack.Screen
-                    name='informative'
+                    name='info'
                     component={InfoScreen}
+                    options={{ headerShown: false }} />
+                <Stack.Screen
+                    name='add'
+                    component={AddScreen}
                     options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>

@@ -14,22 +14,12 @@ export default function AddScreen({ route, navigation }) {
 
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flex: 1 }}>
-      <Appbar.Header style = {{backgroundColor: '#fff'}}>
-        <Appbar.Action icon='menu' onPress={() => { }} />
+      <Appbar.Header style={{ backgroundColor: '#fff' }}>
+        <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('info', { userData: user }) }} />
+        <Appbar.Content title='Adicionar informação' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={homeStyle.container}>
-        <View style={{ margin: 'auto', alignItems: 'center', display: 'flex' }}>
-          <View style={homeStyle.userCircle}>
-            <MaterialIcons name='person' size={96} color='black'></MaterialIcons>
-          </View>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>{user.email}</Text>
-          <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center', margin: 10 }}>O que você quer fazer hoje?</Text>
-        </View>
-        <View style={{ flex: 1, justifyContent: 'space-evenly', display: 'flex', paddingVertical: windowHeight/20}}>
-          <HomeOption onPress={() => {navigation.navigate('informative', {user: user})}} label="Informativo" color="#0066FF" icon="book" />
-          <HomeOption onPress={() => { }} label="Simulador" color="#CA0000" icon="computer" />
-          <HomeOption onPress={() => { }} label="Configurações" color="#9E9FA0" icon="settings" />
-        </View>
+
       </SafeAreaView>
     </ScrollView>
   );

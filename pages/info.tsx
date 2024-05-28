@@ -69,16 +69,6 @@ export default function InfoScreen({ route, navigation }) {
               />
               </View>
             }
-            ListFooterComponent={
-              <View style = {{paddingBottom: windowHeight/20}}>
-              <FAB
-                style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center' }}
-                color='white'
-                icon='plus'
-                onPress={addBlock}
-              />
-              </View>
-            }
             renderItem={({ item }) => (
               <View style={{ borderColor: 'black', borderWidth: 2, height: windowHeight / 4, width: '85%', alignSelf: 'center', marginVertical: windowHeight / 30 }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginTop: 5 }}>{item.name}</Text>
@@ -98,6 +88,14 @@ export default function InfoScreen({ route, navigation }) {
             )}
             ListEmptyComponent={<LoadingCircle/>}
           />
+            <View style = {{paddingBottom: windowHeight/30}}>
+              <FAB
+                style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center' }}
+                color='white'
+                icon='plus'
+                onPress={() => { navigation.navigate('add', { userData: user }) }}
+              />
+              </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
