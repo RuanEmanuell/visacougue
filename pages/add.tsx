@@ -6,9 +6,9 @@ import { homeStyle } from '../styles/home';
 import { MaterialIcons } from '@expo/vector-icons';
 import HomeOption from '../components/option';
 
-export default function HomeScreen({ route, navigation }) {
-  const user: UserData = route.params['userData'];
-
+export default function AddScreen({ route, navigation }) {
+  const user: UserData = route.params;
+  
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
@@ -26,7 +26,7 @@ export default function HomeScreen({ route, navigation }) {
           <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center', margin: 10 }}>O que você quer fazer hoje?</Text>
         </View>
         <View style={{ flex: 1, justifyContent: 'space-evenly', display: 'flex', paddingVertical: windowHeight/20}}>
-          <HomeOption onPress={() => {navigation.navigate('informative', {userData: user})}} label="Informativo" color="#0066FF" icon="book" />
+          <HomeOption onPress={() => {navigation.navigate('informative', {user: user})}} label="Informativo" color="#0066FF" icon="book" />
           <HomeOption onPress={() => { }} label="Simulador" color="#CA0000" icon="computer" />
           <HomeOption onPress={() => { }} label="Configurações" color="#9E9FA0" icon="settings" />
         </View>

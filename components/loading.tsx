@@ -4,7 +4,7 @@ import { ActivityIndicator } from "react-native-paper";
 
 export default function LoadingCircle() {
     return (
-        <View style = {{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style = {{flex: 1, justifyContent: 'center', alignItems: 'center', alignSelf: 'center'}}>
           <ActivityIndicator size='large' color='#1351B4' />
         </View>
     )
