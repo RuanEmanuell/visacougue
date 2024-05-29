@@ -6,15 +6,27 @@ import { homeStyle } from '../styles/home';
 import DSGovInput from '../components/input';
 import DSGovButton from '../components/button';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+
 
 export default function AddScreen({ route, navigation }) {
-  const user: UserData = route.params;
+  const user: UserData = route.params['userData'];
 
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
   const [blockName, setBlockName] = useState('');
-  const [blockImage, setBlockImage] = useState(null);
+  const [blockImage, setBlockImage] = useState<null | ImagePicker.ImagePickerResult>(null);
+
+  async function pickImage(){
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    setBlockImage(result);
+  }
 
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flex: 1 }}>
@@ -29,11 +41,11 @@ export default function AddScreen({ route, navigation }) {
             placeholder='Digite o nome do bloco...'
             onChangeText={(text) => { setBlockName(text) }}
           />
-          {blockImage ? <Image /> :
+          {blockImage ? <Image source={{uri: blockImage.assets![0].uri}} style={{ marginTop: windowHeight/50, width: '66%', height: '50%', resizeMode: 'contain'}}/> :
             <View style={{ marginTop: windowHeight/50, backgroundColor: 'lightgray', width: '66%', height: '50%', justifyContent: 'center', alignItems: 'center' }}>
               <MaterialIcons name={'photo'} color='black' size={96} style={{ marginRight: 12 }}></MaterialIcons>
             </View>}
-          <DSGovButton primary label='Adicionar imagem' onPress={() => { }} />
+          <DSGovButton primary label='Adicionar imagem' onPress={pickImage} />
         </View>
       </SafeAreaView>
     </ScrollView>
