@@ -31,8 +31,8 @@ export default function InfoScreen({ route, navigation }) {
   }
 
   useEffect(() => {
-      setBlocks([]);
-      fetchData();
+    setBlocks([]);
+    fetchData();
   }, []);
 
   return (
@@ -62,7 +62,7 @@ export default function InfoScreen({ route, navigation }) {
               }
               renderItem={({ item }) => (
                 <View style={{ borderColor: 'black', borderWidth: 2, height: windowHeight / 4, width: '85%', alignSelf: 'center', marginVertical: windowHeight / 30 }}>
-                  <Text style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginTop: 5 }}>{item.name}</Text>
+                  <Text style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginVertical: 10 }}>{item.name}</Text>
                   <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Bloco {item.index}</Text>
                   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '85%', width: '100%' }}>
                     <Image source={{ uri: item.image }} style={{ width: '66%', height: '66%', resizeMode: 'contain' }} />
@@ -72,7 +72,7 @@ export default function InfoScreen({ route, navigation }) {
                       onPress={() => { }}
                     />
                   </View>
-                  <Pressable onPress={() => { }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
+                  <Pressable onPress={() => { navigation.navigate('add', { blockData: item, userData: user}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
                     <Icon source='circle-edit-outline' size={36} />
                   </Pressable>
                 </View>

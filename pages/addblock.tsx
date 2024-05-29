@@ -1,5 +1,5 @@
 import { SafeAreaView, Dimensions, ScrollView, View, Text, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import UserData from '../utils/userdata';
 import { Appbar, FAB } from 'react-native-paper';
 import { homeStyle } from '../styles/home';
@@ -7,17 +7,20 @@ import DSGovInput from '../components/input';
 import DSGovButton from '../components/button';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db, storage } from '../utils/firebaseconfig';
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import Block from '../utils/block';
 
 
 export default function AddScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
+  const blockToEdit : Block = route.params['blockData']; 
 
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
+  const [mode, setMode] = useState('add');
   const [blockName, setBlockName] = useState('');
   const [blockImage, setBlockImage] = useState<null | string>(null);
 
@@ -59,15 +62,39 @@ export default function AddScreen({ route, navigation }) {
       });
       navigation.navigate('info', { userData: user })
     } catch (error) {
-      console.error(error);
+      console.error('Ocorreu um erro ao adicionar o bloco:', error);
+      alert('Ocorreu um erro ao adicionar o bloco: ' + error.message);
     }
   }
+
+  async function editBlock() {
+    try {
+      const blockRef = doc(db, 'blocks', blockToEdit.id);
+      const image = blockImage !== blockToEdit.image ? await uploadImage(blockImage!, blockToEdit.index) : blockToEdit.image;
+      await updateDoc(blockRef, {
+        name: blockName,
+        image: image
+      });
+      navigation.navigate('info', { userData: user });
+    } catch (error) {
+      console.error('Ocorreu um erro ao editar o bloco:', error);
+      alert('Ocorreu um erro ao editar o bloco: ' + error.message);
+    }
+  }
+
+  useEffect(() => {
+    if(blockToEdit){
+      setMode('edit');
+      setBlockName(blockToEdit.name);
+      setBlockImage(blockToEdit.image);
+    }
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
         <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('info', { userData: user }) }} />
-        <Appbar.Content title='Adicionar bloco' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
+        <Appbar.Content title={mode == 'add' ? 'Adicionar bloco' : 'Editar Bloco'} titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={homeStyle.container}>
         <View style={{ borderColor: 'black', borderWidth: 3, width: windowWidth / 1.2, height: windowHeight / 2.5, display: 'flex', alignItems: 'center', paddingTop: 10 }}>
@@ -80,13 +107,13 @@ export default function AddScreen({ route, navigation }) {
             <View style={{ marginTop: windowHeight / 50, backgroundColor: 'lightgray', width: '66%', height: '50%', justifyContent: 'center', alignItems: 'center' }}>
               <MaterialIcons name={'photo'} color='black' size={96} style={{ marginRight: 12 }}></MaterialIcons>
             </View>}
-          <DSGovButton primary label='Adicionar imagem' onPress={pickImage} />
+          <DSGovButton primary label={mode == 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
         </View>
         <FAB
           style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center', marginBottom: 20 }}
           color='white'
           icon='content-save'
-          onPress={addBlock}
+          onPress={mode == 'add' ? addBlock : editBlock}
         />
       </SafeAreaView>
     </ScrollView>

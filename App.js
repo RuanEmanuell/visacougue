@@ -4,7 +4,7 @@ import LoginScreen from './pages/login'
 import RegisterScreen from './pages/register';
 import HomeScreen from './pages/home';
 import InfoScreen from './pages/info';
-import AddScreen from './pages/add';
+import AddScreen from './pages/addblock';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
