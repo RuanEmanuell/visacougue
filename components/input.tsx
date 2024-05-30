@@ -4,12 +4,14 @@ import React from "react";
 interface inputProps {
     onChangeText: (arg: string) => any,
     secureTextEntry?: boolean,
-    placeholder: string
+    placeholder: string,
+    value: string
 }
 
-export default function DSGovInput({ onChangeText, secureTextEntry, placeholder }: inputProps) {
+export default function DSGovInput({ onChangeText, secureTextEntry, placeholder, value }: inputProps) {
     return (
         <TextInput
+        value = {value}
         placeholder={placeholder}
         onChangeText={text => onChangeText(text)}
         secureTextEntry={secureTextEntry ? secureTextEntry : false}

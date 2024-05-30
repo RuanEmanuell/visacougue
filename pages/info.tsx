@@ -17,6 +17,7 @@ export default function InfoScreen({ route, navigation }) {
 
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   async function fetchData() {
     setLoading(true);
@@ -33,7 +34,7 @@ export default function InfoScreen({ route, navigation }) {
   useEffect(() => {
     setBlocks([]);
     fetchData();
-  }, []);
+  }, [user]);
 
   return (
     <View style={{ backgroundColor: '#fff', flex: 1 }}>
@@ -54,7 +55,8 @@ export default function InfoScreen({ route, navigation }) {
               ListHeaderComponent={
                 <View style={{ width: '100%', alignItems: 'center' }}>
                   <DSGovInput
-                    onChangeText={() => { }}
+                    onChangeText={(text) => {setSearchValue(text)}}
+                    value = {searchValue}
                     secureTextEntry={false}
                     placeholder='Buscar uma informação...'
                   />

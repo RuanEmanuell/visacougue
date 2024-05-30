@@ -11,11 +11,12 @@ import { addDoc, collection, doc, getDocs, updateDoc } from 'firebase/firestore'
 import { db, storage } from '../utils/firebaseconfig';
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import Block from '../utils/block';
+import LoadingCircle from '../components/loading';
 
 
 export default function AddScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
-  const blockToEdit : Block = route.params['blockData']; 
+  const blockToEdit: Block = route.params['blockData'];
 
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
@@ -23,6 +24,7 @@ export default function AddScreen({ route, navigation }) {
   const [mode, setMode] = useState('add');
   const [blockName, setBlockName] = useState('');
   const [blockImage, setBlockImage] = useState<null | string>(null);
+  const [loading, setLoading] = useState(false);
 
   async function pickImage() {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -34,8 +36,8 @@ export default function AddScreen({ route, navigation }) {
     setBlockImage(result.assets![0].uri);
   }
 
-  async function uploadImage(uri:string, blockNumber: number) {
-    let downloadURL : string | null = null;
+  async function uploadImage(uri: string, blockNumber: number) {
+    let downloadURL: string | null = null;
     try {
       const storageRef = ref(getStorage(), `blockImages/${blockNumber}`);
       const response = await fetch(uri);
@@ -51,6 +53,7 @@ export default function AddScreen({ route, navigation }) {
   }
 
   async function addBlock() {
+    setLoading(true);
     try {
       const queryBlocks = await getDocs(collection(db, 'blocks'));
       const blockNumber = queryBlocks.docs.length + 1;
@@ -60,14 +63,16 @@ export default function AddScreen({ route, navigation }) {
         index: blockNumber,
         image: image
       });
-      navigation.navigate('info', { userData: user })
+      navigation.push('info', { userData: user })
     } catch (error) {
       console.error('Ocorreu um erro ao adicionar o bloco:', error);
       alert('Ocorreu um erro ao adicionar o bloco: ' + error.message);
     }
+    setLoading(false);
   }
 
   async function editBlock() {
+    setLoading(true);
     try {
       const blockRef = doc(db, 'blocks', blockToEdit.id);
       const image = blockImage !== blockToEdit.image ? await uploadImage(blockImage!, blockToEdit.index) : blockToEdit.image;
@@ -75,15 +80,16 @@ export default function AddScreen({ route, navigation }) {
         name: blockName,
         image: image
       });
-      navigation.navigate('info', { userData: user });
+      navigation.push('info', { userData: user });
     } catch (error) {
       console.error('Ocorreu um erro ao editar o bloco:', error);
       alert('Ocorreu um erro ao editar o bloco: ' + error.message);
     }
+    setLoading(false);
   }
 
   useEffect(() => {
-    if(blockToEdit){
+    if (blockToEdit) {
       setMode('edit');
       setBlockName(blockToEdit.name);
       setBlockImage(blockToEdit.image);
@@ -93,28 +99,33 @@ export default function AddScreen({ route, navigation }) {
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
-        <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('info', { userData: user }) }} />
+        <Appbar.Action icon='arrow-left' onPress={() => { navigation.push('info', { userData: user }) }} />
         <Appbar.Content title={mode == 'add' ? 'Adicionar bloco' : 'Editar Bloco'} titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={homeStyle.container}>
-        <View style={{ borderColor: 'black', borderWidth: 3, width: windowWidth / 1.2, height: windowHeight / 2.5, display: 'flex', alignItems: 'center', paddingTop: 10 }}>
-          <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Nome do bloco:</Text>
-          <DSGovInput
-            placeholder='Digite o nome do bloco...'
-            onChangeText={(text) => { setBlockName(text) }}
-          />
-          {blockImage ? <Image source={{ uri: blockImage }} style={{ marginTop: windowHeight / 50, width: '66%', height: '50%', resizeMode: 'contain' }} /> :
-            <View style={{ marginTop: windowHeight / 50, backgroundColor: 'lightgray', width: '66%', height: '50%', justifyContent: 'center', alignItems: 'center' }}>
-              <MaterialIcons name={'photo'} color='black' size={96} style={{ marginRight: 12 }}></MaterialIcons>
-            </View>}
-          <DSGovButton primary label={mode == 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
-        </View>
-        <FAB
-          style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center', marginBottom: 20 }}
-          color='white'
-          icon='content-save'
-          onPress={mode == 'add' ? addBlock : editBlock}
-        />
+        {!loading ?
+          <>
+            <View style={{ borderColor: 'black', borderWidth: 3, width: windowWidth / 1.2, height: windowHeight / 2.5, display: 'flex', alignItems: 'center', paddingTop: 10 }}>
+              <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Nome do bloco:</Text>
+              <DSGovInput
+                placeholder='Digite o nome do bloco...'
+                value={blockName}
+                onChangeText={(text) => { setBlockName(text) }}
+              />
+              {blockImage ? <Image source={{ uri: blockImage }} style={{ marginTop: windowHeight / 50, width: '66%', height: '50%', resizeMode: 'contain' }} /> :
+                <View style={{ marginTop: windowHeight / 50, backgroundColor: 'lightgray', width: '66%', height: '50%', justifyContent: 'center', alignItems: 'center' }}>
+                  <MaterialIcons name={'photo'} color='black' size={96} style={{ marginRight: 12 }}></MaterialIcons>
+                </View>}
+              <DSGovButton primary label={mode == 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
+            </View>
+            <FAB
+              style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center', marginBottom: 20 }}
+              color='white'
+              icon='content-save'
+              onPress={mode == 'add' ? addBlock : editBlock}
+            />
+          </>
+          : <LoadingCircle />}
       </SafeAreaView>
     </ScrollView>
   );
