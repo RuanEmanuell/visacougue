@@ -1,4 +1,4 @@
-import { SafeAreaView, Dimensions, ScrollView, View, Text, Image, Pressable } from 'react-native';
+import { SafeAreaView, Dimensions, ScrollView, View, Text, Image, Pressable, Modal, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import UserData from '../utils/userdata';
 import { Appbar, FAB } from 'react-native-paper';
@@ -7,7 +7,7 @@ import DSGovInput from '../components/input';
 import DSGovButton from '../components/button';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { addDoc, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db, storage } from '../utils/firebaseconfig';
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import Block from '../utils/block';
@@ -26,6 +26,7 @@ export default function AddScreen({ route, navigation }) {
   const [blockImage, setBlockImage] = useState<null | string>(null);
   const [blockIndex, setBlockIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [deleteBlockModalVisible, setDeleteBlockModalVisible] = useState(false);
 
   async function pickImage() {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -54,22 +55,34 @@ export default function AddScreen({ route, navigation }) {
   }
 
   async function addBlock() {
-    setLoading(true);
-    try {
-      const queryBlocks = await getDocs(collection(db, 'blocks'));
-      const blockNumber = queryBlocks.docs.length + 1;
-      const image = await uploadImage(blockImage!, blockNumber);
-      await addDoc(collection(db, 'blocks'), {
-        name: blockName,
-        index: blockIndex,
-        image: image
-      });
-    } catch (error) {
-      console.error('Ocorreu um erro ao adicionar o bloco:', error);
-      alert('Ocorreu um erro ao adicionar o bloco: ' + error.message);
+    if(blockName == ''){
+      Alert.alert(
+        'Aviso',
+        'Digite um nome para o bloco!'
+      );
+    }else if(!blockImage){
+      Alert.alert(
+        'Aviso',
+        'Digite uma imagem para o bloco!'
+      );
+    }else{
+      setLoading(true);
+      try {
+        const queryBlocks = await getDocs(collection(db, 'blocks'));
+        const blockNumber = queryBlocks.docs.length + 1;
+        const image = await uploadImage(blockImage!, blockNumber);
+        await addDoc(collection(db, 'blocks'), {
+          name: blockName,
+          index: blockIndex,
+          image: image
+        });
+      } catch (error) {
+        console.error('Ocorreu um erro ao adicionar o bloco:', error);
+        alert('Ocorreu um erro ao adicionar o bloco: ' + error.message);
+      }
+      setLoading(false);
+      returnToBlocksScreen();
     }
-    setLoading(false);
-    returnToBlocksScreen();
   }
 
   async function editBlock() {
@@ -88,6 +101,24 @@ export default function AddScreen({ route, navigation }) {
     }
     setLoading(false);
     returnToBlocksScreen();
+  }
+
+  async function deleteBlock() {
+    setLoading(true);
+    switchModalVisibility();
+    try {
+      const blockRef = doc(db, 'blocks', blockToEdit!.id);
+      await deleteDoc(blockRef);
+    } catch (error) {
+      console.error('Ocorreu um erro ao editar o bloco:', error);
+      alert('Ocorreu um erro ao editar o bloco: ' + error.message);
+    }
+    setLoading(false);
+    returnToBlocksScreen();
+  }
+
+  function switchModalVisibility() {
+    setDeleteBlockModalVisible(prev => !prev);
   }
 
   async function getNewBlockIndex() {
@@ -115,6 +146,8 @@ export default function AddScreen({ route, navigation }) {
       setBlockName(blockToEdit.name);
       setBlockImage(blockToEdit.image);
       setBlockIndex(blockToEdit.index);
+    } else {
+      getNewBlockIndex();
     }
   }, []);
 
@@ -136,10 +169,14 @@ export default function AddScreen({ route, navigation }) {
               />
               {blockImage ? <Image source={{ uri: blockImage }} style={{ marginTop: windowHeight / 50, width: '66%', height: '50%', resizeMode: 'contain' }} /> :
                 <View style={{ marginTop: windowHeight / 50, backgroundColor: 'lightgray', width: '66%', height: '50%', justifyContent: 'center', alignItems: 'center' }}>
-                  <MaterialIcons name={'photo'} color='black' size={96} style={{ marginRight: 12 }}></MaterialIcons>
+                  <MaterialIcons name='photo' color='black' size={96} style={{ marginRight: 12 }} />
                 </View>}
               <DSGovButton primary label={mode == 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
               <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Bloco {blockIndex}</Text>
+              {mode == 'edit' ?
+                <Pressable onPress={switchModalVisibility} style={{ position: 'absolute', top: 5, right: 5 }}>
+                  <MaterialIcons name='delete-outline' color='#d8504d' size={32} />
+                </Pressable> : <></>}
             </View>
             <FAB
               style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center', marginBottom: 20 }}
@@ -150,6 +187,25 @@ export default function AddScreen({ route, navigation }) {
           </>
           : <LoadingCircle />}
       </SafeAreaView>
+      <Modal visible={deleteBlockModalVisible} transparent={true}>
+        <View style={{ backgroundColor: 'rgba(135, 132, 133, 0.66)', flex: 1, justifyContent: 'center' }}>
+          <View style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, display: 'flex', alignItems: 'center', paddingVertical: 20, paddingHorizontal: 10 }}>
+            <Text style = {{textAlign: 'center'}}>Deseja mesmo apagar esse bloco? (Todas as informações contidas nele também serão apagadas)</Text>
+            <DSGovButton
+              primary
+              label='Sim'
+              onPress={deleteBlock}
+              block 
+            />
+            <DSGovButton
+              label='Não'
+              secondary
+              onPress={switchModalVisibility}
+              block
+            />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
