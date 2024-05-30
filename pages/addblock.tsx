@@ -1,4 +1,4 @@
-import { SafeAreaView, Dimensions, ScrollView, View, Text, Image } from 'react-native';
+import { SafeAreaView, Dimensions, ScrollView, View, Text, Image, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import UserData from '../utils/userdata';
 import { Appbar, FAB } from 'react-native-paper';
@@ -16,7 +16,7 @@ import LoadingCircle from '../components/loading';
 
 export default function AddScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
-  const blockToEdit: Block = route.params['blockData'];
+  let blockToEdit: Block | null = route.params['blockData'];
 
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
@@ -24,6 +24,7 @@ export default function AddScreen({ route, navigation }) {
   const [mode, setMode] = useState('add');
   const [blockName, setBlockName] = useState('');
   const [blockImage, setBlockImage] = useState<null | string>(null);
+  const [blockIndex, setBlockIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
   async function pickImage() {
@@ -60,32 +61,52 @@ export default function AddScreen({ route, navigation }) {
       const image = await uploadImage(blockImage!, blockNumber);
       await addDoc(collection(db, 'blocks'), {
         name: blockName,
-        index: blockNumber,
+        index: blockIndex,
         image: image
       });
-      navigation.push('info', { userData: user })
     } catch (error) {
       console.error('Ocorreu um erro ao adicionar o bloco:', error);
       alert('Ocorreu um erro ao adicionar o bloco: ' + error.message);
     }
     setLoading(false);
+    returnToBlocksScreen();
   }
 
   async function editBlock() {
     setLoading(true);
     try {
-      const blockRef = doc(db, 'blocks', blockToEdit.id);
-      const image = blockImage !== blockToEdit.image ? await uploadImage(blockImage!, blockToEdit.index) : blockToEdit.image;
+      const blockRef = doc(db, 'blocks', blockToEdit!.id);
+      const image = blockImage !== blockToEdit!.image ? await uploadImage(blockImage!, blockToEdit!.index) : blockToEdit!.image;
       await updateDoc(blockRef, {
         name: blockName,
-        image: image
+        index: blockIndex,
+        image: image,
       });
-      navigation.push('info', { userData: user });
     } catch (error) {
       console.error('Ocorreu um erro ao editar o bloco:', error);
       alert('Ocorreu um erro ao editar o bloco: ' + error.message);
     }
     setLoading(false);
+    returnToBlocksScreen();
+  }
+
+  async function getNewBlockIndex() {
+    const queryBlocks = await getDocs(collection(db, 'blocks'));
+    const blockNumber = queryBlocks.docs.length + 1;
+    setBlockIndex(blockNumber);
+  }
+
+  function resetBlockData() {
+    blockToEdit = null;
+    setMode('add');
+    setBlockImage(null);
+    setBlockName('');
+    getNewBlockIndex();
+  }
+
+  function returnToBlocksScreen() {
+    navigation.push('info', { userData: user });
+    resetBlockData();
   }
 
   useEffect(() => {
@@ -93,19 +114,20 @@ export default function AddScreen({ route, navigation }) {
       setMode('edit');
       setBlockName(blockToEdit.name);
       setBlockImage(blockToEdit.image);
+      setBlockIndex(blockToEdit.index);
     }
   }, []);
 
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
-        <Appbar.Action icon='arrow-left' onPress={() => { navigation.push('info', { userData: user }) }} />
+        <Appbar.Action icon='arrow-left' onPress={returnToBlocksScreen} />
         <Appbar.Content title={mode == 'add' ? 'Adicionar bloco' : 'Editar Bloco'} titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={homeStyle.container}>
         {!loading ?
           <>
-            <View style={{ borderColor: 'black', borderWidth: 3, width: windowWidth / 1.2, height: windowHeight / 2.5, display: 'flex', alignItems: 'center', paddingTop: 10 }}>
+            <View style={{ borderColor: 'black', borderWidth: 3, width: windowWidth / 1.1, height: windowHeight / 2, display: 'flex', alignItems: 'center', paddingTop: 10 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Nome do bloco:</Text>
               <DSGovInput
                 placeholder='Digite o nome do bloco...'
@@ -117,6 +139,7 @@ export default function AddScreen({ route, navigation }) {
                   <MaterialIcons name={'photo'} color='black' size={96} style={{ marginRight: 12 }}></MaterialIcons>
                 </View>}
               <DSGovButton primary label={mode == 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
+              <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Bloco {blockIndex}</Text>
             </View>
             <FAB
               style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center', marginBottom: 20 }}

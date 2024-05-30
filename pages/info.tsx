@@ -23,8 +23,9 @@ export default function InfoScreen({ route, navigation }) {
     setLoading(true);
     try {
       const queryBlocks = await getDocs(collection(db, 'blocks'));
-      const blockList = queryBlocks.docs.map(block => ({ id: block.id, ...block.data() }));
-      setBlocks(blockList as Block[]);
+      const blockList = queryBlocks.docs.map(block => ({ id: block.id, ...block.data() })) as Block[];
+      blockList.sort((a, b) => a.index - b.index );
+      setBlocks(blockList);
     } catch (error) {
       console.error(error);
     }
@@ -34,13 +35,13 @@ export default function InfoScreen({ route, navigation }) {
   useEffect(() => {
     setBlocks([]);
     fetchData();
-  }, [user]);
+  }, []);
 
   return (
     <View style={{ backgroundColor: '#fff', flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
         <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('home', { userData: user }) }} />
-        <Appbar.Content title='Informativo' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
+        <Appbar.Content title='Informativo - Blocos' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
@@ -58,12 +59,12 @@ export default function InfoScreen({ route, navigation }) {
                     onChangeText={(text) => {setSearchValue(text)}}
                     value = {searchValue}
                     secureTextEntry={false}
-                    placeholder='Buscar uma informação...'
+                    placeholder='Buscar um bloco...'
                   />
                 </View>
               }
               renderItem={({ item }) => (
-                <View style={{ borderColor: 'black', borderWidth: 2, height: windowHeight / 4, width: '85%', alignSelf: 'center', marginVertical: windowHeight / 30 }}>
+                <View style={{ borderColor: 'black', borderWidth: 2, height: windowHeight / 3, width: '85%', alignSelf: 'center', marginVertical: windowHeight / 30 }}>
                   <Text style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginVertical: 10 }}>{item.name}</Text>
                   <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Bloco {item.index}</Text>
                   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '85%', width: '100%' }}>
@@ -74,7 +75,7 @@ export default function InfoScreen({ route, navigation }) {
                       onPress={() => { }}
                     />
                   </View>
-                  <Pressable onPress={() => { navigation.navigate('add', { blockData: item, userData: user}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
+                  <Pressable onPress={() => { navigation.push('add', { blockData: item, userData: user}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
                     <Icon source='circle-edit-outline' size={36} />
                   </Pressable>
                 </View>
@@ -85,7 +86,7 @@ export default function InfoScreen({ route, navigation }) {
             /> : <LoadingCircle />}
           <View style={{ paddingBottom: windowHeight / 30 }}>
             <FAB
-              style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center' }}
+              style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 5, alignSelf: 'center' }}
               color='white'
               icon='plus'
               onPress={() => { navigation.navigate('add', { userData: user }) }}
