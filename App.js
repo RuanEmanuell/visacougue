@@ -3,10 +3,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './pages/login'
 import RegisterScreen from './pages/register';
 import HomeScreen from './pages/home';
-import InfoScreen from './pages/info';
+import InformativeScreen from './pages/informative';
 import AddBlockScreen from './pages/addblock';
 import BlockScreen from './pages/block';
 import AddInfoScreen from './pages/addinfo';
+import InfoScreen from './pages/info';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -26,8 +27,8 @@ export default function App() {
                     component={HomeScreen}
                     options={{ headerShown: false }} />
                 <Stack.Screen
-                    name='info'
-                    component={InfoScreen}
+                    name='informative'
+                    component={InformativeScreen}
                     options={{ headerShown: false }} />
                 <Stack.Screen
                     name='addblock'
@@ -40,6 +41,10 @@ export default function App() {
                 <Stack.Screen
                     name='addinfo'
                     component={AddInfoScreen}
+                    options={{ headerShown: false }} />
+                <Stack.Screen
+                    name='info'
+                    component={InfoScreen}
                     options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
