@@ -19,17 +19,23 @@ export default function InfoScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
+  let originalBlockList : Block[];
+
   async function fetchData() {
     setLoading(true);
     try {
-      const queryBlocks = await getDocs(collection(db, 'blocks'));
-      const blockList = queryBlocks.docs.map(block => ({ id: block.id, ...block.data() })) as Block[];
+      const querySnapshot = await getDocs(collection(db, 'blocks'));
+      const blockList = querySnapshot.docs.map(block => ({ id: block.id, ...block.data() })) as Block[];
       blockList.sort((a, b) => a.index - b.index );
       setBlocks(blockList);
     } catch (error) {
       console.error(error);
     }
     setLoading(false);
+  }
+
+  function searchBlock(){
+    setBlocks(prev => prev.filter(block => block.name.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())));
   }
 
   useEffect(() => {
@@ -56,7 +62,7 @@ export default function InfoScreen({ route, navigation }) {
               ListHeaderComponent={
                 <View style={{ width: '100%', alignItems: 'center' }}>
                   <DSGovInput
-                    onChangeText={(text) => {setSearchValue(text)}}
+                    onChangeText={(text) => {setSearchValue(text); searchBlock()}}
                     value = {searchValue}
                     secureTextEntry={false}
                     placeholder='Buscar um bloco...'
@@ -75,7 +81,7 @@ export default function InfoScreen({ route, navigation }) {
                       onPress={() => {navigation.navigate('block', {userData: user, blockData: item})}}
                     />
                   </View>
-                  <Pressable onPress={() => { navigation.push('add', { blockData: item, userData: user}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
+                  <Pressable onPress={() => { navigation.push('addblock', { blockData: item, userData: user}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
                     <Icon source='circle-edit-outline' size={36} />
                   </Pressable>
                 </View>
@@ -89,7 +95,7 @@ export default function InfoScreen({ route, navigation }) {
               style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 5, alignSelf: 'center' }}
               color='white'
               icon='plus'
-              onPress={() => { navigation.navigate('add', { userData: user }) }}
+              onPress={() => { navigation.navigate('addblock', { userData: user }) }}
             />
           </View>
         </KeyboardAvoidingView>

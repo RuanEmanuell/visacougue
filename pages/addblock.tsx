@@ -41,7 +41,7 @@ export default function AddBlockScreen({ route, navigation }) {
   async function uploadImage(uri: string, blockNumber: number) {
     let downloadURL: string | null = null;
     try {
-      const storageRef = ref(getStorage(), `blockImages/${blockNumber}`);
+      const storageRef = ref(getStorage(), `blockImages/${blockNumber}/blockMainImage`);
       const response = await fetch(uri);
       const blob = await response.blob();
       await uploadBytes(storageRef, blob);

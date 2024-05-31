@@ -6,6 +6,7 @@ import HomeScreen from './pages/home';
 import InfoScreen from './pages/info';
 import AddBlockScreen from './pages/addblock';
 import BlockScreen from './pages/block';
+import AddInfoScreen from './pages/addinfo';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -29,12 +30,16 @@ export default function App() {
                     component={InfoScreen}
                     options={{ headerShown: false }} />
                 <Stack.Screen
-                    name='add'
+                    name='addblock'
                     component={AddBlockScreen}
                     options={{ headerShown: false }} />
                 <Stack.Screen
                     name='block'
                     component={BlockScreen}
+                    options={{ headerShown: false }} />
+                <Stack.Screen
+                    name='addinfo'
+                    component={AddInfoScreen}
                     options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Appbar, FAB, Icon } from 'react-native-paper';
 import DSGovInput from '../components/input';
 import { db } from '../utils/firebaseconfig';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import LoadingCircle from '../components/loading';
 import DSGovButton from '../components/button';
 import Block from '../utils/block';
@@ -24,15 +24,17 @@ export default function BlockScreen({ route, navigation }) {
   async function fetchData() {
     setLoading(true);
     try {
-      const queryInfo = await getDocs(collection(db, 'info'));
-      const infoList = queryInfo.docs.map(info => ({ id: info.id, ...info.data() })) as Info[];
-      infoList.sort((a, b) => a.index - b.index );
+      const queryBlocks = query(collection(db, 'infos'), where('blockId', '==', blockData.id));
+      const querySnapshot = await getDocs(queryBlocks);
+      const infoList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Info[];
+      infoList.sort((a, b) => a.index - b.index);
       setBlockInfos(infoList);
     } catch (error) {
       console.error(error);
     }
     setLoading(false);
   }
+  
 
   useEffect(() => {
     setBlockInfos([]);
@@ -68,7 +70,7 @@ export default function BlockScreen({ route, navigation }) {
               renderItem={({ item }) => (
                 <View style={{ borderColor: 'black', borderWidth: 2, height: windowHeight / 3, width: '85%', alignSelf: 'center', marginVertical: windowHeight / 30 }}>
                   <Text style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginVertical: 10 }}>{item.name}</Text>
-                  <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Bloco {item.index}</Text>
+                  <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Informação {item.index}</Text>
                   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '85%', width: '100%' }}>
                     <Image source={{ uri: item.image }} style={{ width: '66%', height: '66%', resizeMode: 'contain' }} />
                     <DSGovButton
@@ -77,7 +79,7 @@ export default function BlockScreen({ route, navigation }) {
                       onPress={() => { }}
                     />
                   </View>
-                  <Pressable onPress={() => { navigation.push('add', { blockData: item, userData: user}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
+                  <Pressable onPress={() => { navigation.push('addinfo', { blockData: item, userData: user, infoData: item}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
                     <Icon source='circle-edit-outline' size={36} />
                   </Pressable>
                 </View>
@@ -91,7 +93,7 @@ export default function BlockScreen({ route, navigation }) {
               style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 5, alignSelf: 'center' }}
               color='white'
               icon='plus'
-              onPress={() => { navigation.navigate('add', { userData: user }) }}
+              onPress={() => { navigation.navigate('addinfo', { userData: user, blockData: blockData }) }}
             />
           </View>
         </KeyboardAvoidingView>

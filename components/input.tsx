@@ -5,16 +5,20 @@ interface inputProps {
     onChangeText: (arg: string) => any,
     secureTextEntry?: boolean,
     placeholder: string,
-    value: string
+    value: string,
+    multiline?: boolean,
+    numberOfLines?: number
 }
 
-export default function DSGovInput({ onChangeText, secureTextEntry, placeholder, value }: inputProps) {
+export default function DSGovInput({ onChangeText, secureTextEntry, placeholder, value, multiline, numberOfLines }: inputProps) {
     return (
         <TextInput
         value = {value}
         placeholder={placeholder}
         onChangeText={text => onChangeText(text)}
         secureTextEntry={secureTextEntry ? secureTextEntry : false}
+        multiline = {multiline ? multiline : false}
+        numberOfLines={numberOfLines ? numberOfLines : 1}
         style={{
             borderColor: 'black',
             borderWidth: 1,
@@ -23,9 +27,9 @@ export default function DSGovInput({ onChangeText, secureTextEntry, placeholder,
             fontSize: 20,
             fontWeight: 'bold',
             width: '75%',
-            height: 48,
+            height: numberOfLines ? 16 * numberOfLines : 48,
             marginTop: 16,
-            paddingLeft: 16
+            paddingHorizontal: 8
         }}></TextInput>
     )
 }
