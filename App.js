@@ -4,7 +4,8 @@ import LoginScreen from './pages/login'
 import RegisterScreen from './pages/register';
 import HomeScreen from './pages/home';
 import InfoScreen from './pages/info';
-import AddScreen from './pages/addblock';
+import AddBlockScreen from './pages/addblock';
+import BlockScreen from './pages/block';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -29,7 +30,11 @@ export default function App() {
                     options={{ headerShown: false }} />
                 <Stack.Screen
                     name='add'
-                    component={AddScreen}
+                    component={AddBlockScreen}
+                    options={{ headerShown: false }} />
+                <Stack.Screen
+                    name='block'
+                    component={BlockScreen}
                     options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>

@@ -8,24 +8,26 @@ import LoadingCircle from '../components/loading';
 import DSGovButton from '../components/button';
 import Block from '../utils/block';
 import UserData from '../utils/userdata';
+import Info from '../utils/info';
 
-export default function InfoScreen({ route, navigation }) {
+export default function BlockScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
+  const blockData: Block = route.params['blockData'];
 
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
-  const [blocks, setBlocks] = useState<Block[]>([]);
-  const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [blockInfos, setBlockInfos] = useState<Info[]>([]);
+  const [loading, setLoading] = useState(false);
 
   async function fetchData() {
     setLoading(true);
     try {
-      const queryBlocks = await getDocs(collection(db, 'blocks'));
-      const blockList = queryBlocks.docs.map(block => ({ id: block.id, ...block.data() })) as Block[];
-      blockList.sort((a, b) => a.index - b.index );
-      setBlocks(blockList);
+      const queryInfo = await getDocs(collection(db, 'info'));
+      const infoList = queryInfo.docs.map(info => ({ id: info.id, ...info.data() })) as Info[];
+      infoList.sort((a, b) => a.index - b.index );
+      setBlockInfos(infoList);
     } catch (error) {
       console.error(error);
     }
@@ -33,15 +35,15 @@ export default function InfoScreen({ route, navigation }) {
   }
 
   useEffect(() => {
-    setBlocks([]);
+    setBlockInfos([]);
     fetchData();
   }, []);
 
   return (
     <View style={{ backgroundColor: '#fff', flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
-        <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('home', { userData: user }) }} />
-        <Appbar.Content title='Informativo - Blocos' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
+        <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('info', { userData: user }) }} />
+        <Appbar.Content title={`Bloco ${blockData.index} - ${blockData.name}`} titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
@@ -51,7 +53,7 @@ export default function InfoScreen({ route, navigation }) {
           {!loading ?
             <FlatList
               style={{ flex: 1, width: '100%' }}
-              data={blocks}
+              data={blockInfos}
               keyExtractor={(item) => item.id}
               ListHeaderComponent={
                 <View style={{ width: '100%', alignItems: 'center' }}>
@@ -59,7 +61,7 @@ export default function InfoScreen({ route, navigation }) {
                     onChangeText={(text) => {setSearchValue(text)}}
                     value = {searchValue}
                     secureTextEntry={false}
-                    placeholder='Buscar um bloco...'
+                    placeholder='Buscar uma informação...'
                   />
                 </View>
               }
@@ -72,7 +74,7 @@ export default function InfoScreen({ route, navigation }) {
                     <DSGovButton
                       primary
                       label='Acessar'
-                      onPress={() => {navigation.navigate('block', {userData: user, blockData: item})}}
+                      onPress={() => { }}
                     />
                   </View>
                   <Pressable onPress={() => { navigation.push('add', { blockData: item, userData: user}) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>
@@ -81,7 +83,7 @@ export default function InfoScreen({ route, navigation }) {
                 </View>
               )}
               ListEmptyComponent={
-                <Text style={{ marginTop: 20, textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>Ainda não há nenhum bloco...</Text>
+                <Text style={{ marginTop: 20, textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>Ainda não há nenhuma informação nesse bloco...</Text>
               }
             /> : <LoadingCircle />}
           <View style={{ paddingBottom: windowHeight / 30 }}>

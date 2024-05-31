@@ -14,7 +14,7 @@ import Block from '../utils/block';
 import LoadingCircle from '../components/loading';
 
 
-export default function AddScreen({ route, navigation }) {
+export default function AddBlockScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
   let blockToEdit: Block | null = route.params['blockData'];
 
@@ -189,7 +189,7 @@ export default function AddScreen({ route, navigation }) {
       </SafeAreaView>
       <Modal visible={deleteBlockModalVisible} transparent={true}>
         <View style={{ backgroundColor: 'rgba(135, 132, 133, 0.66)', flex: 1, justifyContent: 'center' }}>
-          <View style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, display: 'flex', alignItems: 'center', paddingVertical: 20, paddingHorizontal: 10 }}>
+          <View style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, display: 'flex', alignItems: 'center', paddingVertical: 20, paddingHorizontal: 10, marginHorizontal: 10 }}>
             <Text style = {{textAlign: 'center'}}>Deseja mesmo apagar esse bloco? (Todas as informações contidas nele também serão apagadas)</Text>
             <DSGovButton
               primary
