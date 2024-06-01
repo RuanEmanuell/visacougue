@@ -12,6 +12,7 @@ import { db, storage } from '../utils/firebaseconfig';
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import Block from '../utils/block';
 import LoadingCircle from '../components/loading';
+import getCurrentTime from '../utils/gettime';
 
 
 export default function AddBlockScreen({ route, navigation }) {
@@ -55,17 +56,17 @@ export default function AddBlockScreen({ route, navigation }) {
   }
 
   async function addBlock() {
-    if(blockName == ''){
+    if (blockName == '') {
       Alert.alert(
         'Aviso',
         'Digite um nome para o bloco!'
       );
-    }else if(!blockImage){
+    } else if (!blockImage) {
       Alert.alert(
         'Aviso',
         'Digite uma imagem para o bloco!'
       );
-    }else{
+    } else {
       setLoading(true);
       try {
         const queryBlocks = await getDocs(collection(db, 'blocks'));
@@ -74,7 +75,11 @@ export default function AddBlockScreen({ route, navigation }) {
         await addDoc(collection(db, 'blocks'), {
           name: blockName,
           index: blockIndex,
-          image: image
+          image: image,
+          creationUser: user.uid,
+          modificationUser: user.uid,
+          creationDate: getCurrentTime(),
+          modificationDate: getCurrentTime()
         });
       } catch (error) {
         console.error('Ocorreu um erro ao adicionar o bloco:', error);
@@ -86,6 +91,7 @@ export default function AddBlockScreen({ route, navigation }) {
   }
 
   async function editBlock() {
+    const currentDate = new Date();
     setLoading(true);
     try {
       const blockRef = doc(db, 'blocks', blockToEdit!.id);
@@ -94,6 +100,8 @@ export default function AddBlockScreen({ route, navigation }) {
         name: blockName,
         index: blockIndex,
         image: image,
+        modificationUser: user.uid,
+        modificationDate: getCurrentTime()
       });
     } catch (error) {
       console.error('Ocorreu um erro ao editar o bloco:', error);
@@ -123,8 +131,8 @@ export default function AddBlockScreen({ route, navigation }) {
 
   async function getNewBlockIndex() {
     const queryBlocks = await getDocs(collection(db, 'blocks'));
-    const blockNumber = queryBlocks.docs.length + 1;
-    setBlockIndex(blockNumber);
+    const blockNumber : number = queryBlocks.docs.length + 1;
+    return blockNumber;
   }
 
   function resetBlockData() {
@@ -132,12 +140,27 @@ export default function AddBlockScreen({ route, navigation }) {
     setMode('add');
     setBlockImage(null);
     setBlockName('');
-    getNewBlockIndex();
+    setBlockIndex(getNewBlockIndex());
   }
 
   function returnToBlocksScreen() {
-    navigation.push('info', { userData: user });
+    navigation.push('informative', { userData: user });
     resetBlockData();
+  }
+
+  async function increaseBlockIndex(){
+    let currentBlockIndex = await getNewBlockIndex();
+    if(blockIndex < currentBlockIndex){
+    setBlockIndex(prev => prev + 1);
+    }
+  }
+
+  async function decreaseBlockIndex(){
+    let currentBlockIndex = await blockIndex;
+    if(currentBlockIndex > 1){
+      currentBlockIndex--;
+    setBlockIndex(currentBlockIndex);
+    }
   }
 
   useEffect(() => {
@@ -147,7 +170,7 @@ export default function AddBlockScreen({ route, navigation }) {
       setBlockImage(blockToEdit.image);
       setBlockIndex(blockToEdit.index);
     } else {
-      getNewBlockIndex();
+      setBlockIndex(getNewBlockIndex());
     }
   }, []);
 
@@ -172,7 +195,15 @@ export default function AddBlockScreen({ route, navigation }) {
                   <MaterialIcons name='photo' color='black' size={96} style={{ marginRight: 12 }} />
                 </View>}
               <DSGovButton primary label={mode == 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Bloco {blockIndex}</Text>
+              <View style={{ display: 'flex', flexDirection: 'row', position: 'absolute', bottom: 0, left: 5, marginBottom: 5, alignItems: 'center' }}>
+                <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16 }}>Bloco {blockIndex}</Text>
+                <Pressable onPress = {increaseBlockIndex}>
+                  <MaterialIcons name='arrow-upward' size={24} style={{ color: 'grey' }} />
+                </Pressable>
+                <Pressable onPress = {decreaseBlockIndex}>
+                  <MaterialIcons name='arrow-downward' size={24} style={{ color: 'grey' }} />
+                </Pressable> 
+              </View>
               {mode == 'edit' ?
                 <Pressable onPress={switchModalVisibility} style={{ position: 'absolute', top: 5, right: 5 }}>
                   <MaterialIcons name='delete-outline' color='#d8504d' size={32} />
@@ -190,12 +221,12 @@ export default function AddBlockScreen({ route, navigation }) {
       <Modal visible={deleteBlockModalVisible} transparent={true}>
         <View style={{ backgroundColor: 'rgba(135, 132, 133, 0.66)', flex: 1, justifyContent: 'center' }}>
           <View style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, display: 'flex', alignItems: 'center', paddingVertical: 20, paddingHorizontal: 10, marginHorizontal: 10 }}>
-            <Text style = {{textAlign: 'center'}}>Deseja mesmo apagar esse bloco? (Todas as informações contidas nele também serão apagadas)</Text>
+            <Text style={{ textAlign: 'center' }}>Deseja mesmo apagar esse bloco? (Todas as informações contidas nele também serão apagadas)</Text>
             <DSGovButton
               primary
               label='Sim'
               onPress={deleteBlock}
-              block 
+              block
             />
             <DSGovButton
               label='Não'

@@ -30,9 +30,9 @@ export default function InfoScreen({ route, navigation }) {
                     <Image source={{ uri: infoData.image }} style={{ borderColor: 'black', borderWidth: 2, width: '100%', height: '50%', resizeMode: 'cover', alignSelf: 'center' }} />
                     <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{infoData.description}</Text>
                     <DSGovButton
-                    label = 'Voltar'
-                    secondary
-                    onPress={() => {navigation.goBack()}}
+                        label='Voltar'
+                        secondary
+                        onPress={() => { navigation.goBack() }}
                     />
                 </View>
             </SafeAreaView>

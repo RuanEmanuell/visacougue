@@ -5,4 +5,8 @@ export default interface Info {
     index: number,
     image: string | null,
     description: string,
+    creationUser: string,
+    modificationUser: string,
+    creationDate: string,
+    modificationDate: string
 }

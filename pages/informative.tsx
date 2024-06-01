@@ -47,7 +47,7 @@ export default function InfoScreen({ route, navigation }) {
     <View style={{ backgroundColor: '#fff', flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
       <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('home', { userData: user }) }} />
-        <Appbar.Content title='Informativo - Blocos' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
+      <Appbar.Content title='Informativo - Blocos' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView

@@ -13,6 +13,7 @@ import { homeStyle } from '../styles/home';
 import Info from '../utils/info';
 import Block from '../utils/block';
 import UserData from '../utils/userdata';
+import getCurrentTime from '../utils/gettime';
 
 export default function AddInfoScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
@@ -84,6 +85,10 @@ export default function AddInfoScreen({ route, navigation }) {
           index: infoIndex,
           image: image,
           description: infoDescription,
+          creationUser: user.uid,
+          modificationUser: user.uid,
+          creationDate: getCurrentTime(),
+          modificationDate: getCurrentTime()
         });
       } catch (error) {
         console.error('Ocorreu um erro ao adicionar a informação:', error);
@@ -104,6 +109,8 @@ export default function AddInfoScreen({ route, navigation }) {
         index: infoIndex,
         image: image,
         description: infoDescription,
+        modificationUser: user.uid,
+        modificationDate: getCurrentTime()
       });
     } catch (error) {
       console.error('Ocorreu um erro ao editar a informação:', error);
@@ -185,7 +192,7 @@ export default function AddInfoScreen({ route, navigation }) {
                 value={infoDescription}
                 onChangeText={(text) => { setInfoDescription(text) }}
                 multiline
-                numberOfLines={12}
+                textAlign='star'
               />
               {infoImage ? <Image source={{ uri: infoImage }} style={{ marginTop: windowHeight / 50, width: '66%', height: '30%', resizeMode: 'contain' }} /> :
                 <View style={{ marginTop: windowHeight / 50, backgroundColor: 'lightgray', width: '66%', height: '30%', justifyContent: 'center', alignItems: 'center' }}>

@@ -10,6 +10,7 @@ import UserData from '../utils/userdata';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import { doc, setDoc } from 'firebase/firestore';
 import LoadingCircle from '../components/loading';
+import getCurrentTime from '../utils/gettime';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -57,7 +58,9 @@ export default function RegisterScreen({ navigation }) {
       await setDoc(userRef, {
         name: userData.displayName,
         email: userData.email,
-        type: 'user'
+        type: 'user',
+        creationDate: getCurrentTime(),
+        modificationDate: getCurrentTime()
       })
     } catch (error) {
       console.error(error);
