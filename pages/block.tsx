@@ -21,20 +21,25 @@ export default function BlockScreen({ route, navigation }) {
   const [blockInfos, setBlockInfos] = useState<Info[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [originalInfoList, setOriginalInfoList] = useState<Info[]>([]);
+
   async function fetchData() {
     setLoading(true);
     try {
       const queryBlocks = query(collection(db, 'infos'), where('blockId', '==', blockData.id));
       const querySnapshot = await getDocs(queryBlocks);
       const infoList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Info[];
-      infoList.sort((a, b) => a.index - b.index);
       setBlockInfos(infoList);
+      setOriginalInfoList(infoList);
     } catch (error) {
       console.error(error);
     }
     setLoading(false);
   }
 
+  function searchInfo() {
+    setBlockInfos(originalInfoList.filter(block => block.name.toLowerCase().includes(searchValue.toLowerCase())));
+  }
 
   useEffect(() => {
     setBlockInfos([]);
@@ -45,7 +50,7 @@ export default function BlockScreen({ route, navigation }) {
     <View style={{ backgroundColor: '#fff', flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
         <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('informative', { userData: user }) }} />
-        <Appbar.Content title={`Bloco ${blockData.index} - ${blockData.name}`} titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
+        <Appbar.Content title={`Bloco - ${blockData.name}`} titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
@@ -60,17 +65,17 @@ export default function BlockScreen({ route, navigation }) {
               ListHeaderComponent={
                 <View style={{ width: '100%', alignItems: 'center' }}>
                   <DSGovInput
-                    onChangeText={(text) => { setSearchValue(text) }}
+                    onChangeText={(text) => { setSearchValue(text); searchInfo() }}
                     value={searchValue}
                     secureTextEntry={false}
                     placeholder='Buscar uma informação...'
                   />
                 </View>
               }
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <View style={{ borderColor: 'black', borderWidth: 2, height: windowHeight / 3, width: '85%', alignSelf: 'center', marginVertical: windowHeight / 30 }}>
                   <Text style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginVertical: 10 }}>{item.name}</Text>
-                  <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Informação {item.index}</Text>
+                  <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Informação {index + 1}</Text>
                   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '85%', width: '100%' }}>
                     <Image source={{ uri: item.image }} style={{ width: '66%', height: '66%', resizeMode: 'contain' }} />
                     <DSGovButton

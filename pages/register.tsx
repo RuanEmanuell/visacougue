@@ -105,19 +105,23 @@ export default function RegisterScreen({ navigation }) {
           <Text style={{ fontWeight: 'bold', fontSize: 36 }}>Criar sua conta</Text>
           <DSGovInput
             placeholder='Digite seu email'
+            value={email}
             onChangeText={text => setEmail(text)}>
           </DSGovInput>
           <DSGovInput
             placeholder='Digite seu nome de usuário'
+            value={name}
             onChangeText={text => setName(text)}>
           </DSGovInput>
           <DSGovInput
             placeholder='Digite sua senha'
+            value={password}
             onChangeText={text => setPassword(text)}
             secureTextEntry={!passwordVisible}>
           </DSGovInput>
           <DSGovInput
             placeholder='Confirme sua senha'
+            value={confirmPassword}
             onChangeText={text => setConfirmPassword(text)}
             secureTextEntry={!passwordVisible}>
           </DSGovInput>

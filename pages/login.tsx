@@ -76,10 +76,12 @@ export default function LoginScreen({ navigation }) {
         <Text style={{ fontWeight: 'bold', fontSize: 36 }}>Login</Text>
         <DSGovInput
           placeholder='Digite seu email'
+          value={email}
           onChangeText={text => setEmail(text)}>
         </DSGovInput>
         <DSGovInput
           placeholder='Digite sua senha'
+          value={password}
           onChangeText={text => setPassword(text)}
           secureTextEntry={!passwordVisible}>
         </DSGovInput>

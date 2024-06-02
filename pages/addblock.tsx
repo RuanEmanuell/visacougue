@@ -9,11 +9,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db, storage } from '../utils/firebaseconfig';
-import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import Block from '../utils/block';
 import LoadingCircle from '../components/loading';
 import getCurrentTime from '../utils/gettime';
-
 
 export default function AddBlockScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
@@ -25,7 +24,6 @@ export default function AddBlockScreen({ route, navigation }) {
   const [mode, setMode] = useState('add');
   const [blockName, setBlockName] = useState('');
   const [blockImage, setBlockImage] = useState<null | string>(null);
-  const [blockIndex, setBlockIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [deleteBlockModalVisible, setDeleteBlockModalVisible] = useState(false);
 
@@ -39,10 +37,10 @@ export default function AddBlockScreen({ route, navigation }) {
     setBlockImage(result.assets![0].uri);
   }
 
-  async function uploadImage(uri: string, blockNumber: number) {
+  async function uploadImage(uri: string, blockId: string) {
     let downloadURL: string | null = null;
     try {
-      const storageRef = ref(getStorage(), `blockImages/${blockNumber}/blockMainImage`);
+      const storageRef = ref(getStorage(), `blockImages/${blockId}/blockMainImage`);
       const response = await fetch(uri);
       const blob = await response.blob();
       await uploadBytes(storageRef, blob);
@@ -69,18 +67,15 @@ export default function AddBlockScreen({ route, navigation }) {
     } else {
       setLoading(true);
       try {
-        const queryBlocks = await getDocs(collection(db, 'blocks'));
-        const blockNumber = queryBlocks.docs.length + 1;
-        const image = await uploadImage(blockImage!, blockNumber);
-        await addDoc(collection(db, 'blocks'), {
+        const newBlockRef = await addDoc(collection(db, 'blocks'), {
           name: blockName,
-          index: blockIndex,
-          image: image,
           creationUser: user.uid,
           modificationUser: user.uid,
           creationDate: getCurrentTime(),
           modificationDate: getCurrentTime()
         });
+        const image = await uploadImage(blockImage!, newBlockRef.id);
+        await updateDoc(newBlockRef, { image: image });
       } catch (error) {
         console.error('Ocorreu um erro ao adicionar o bloco:', error);
         alert('Ocorreu um erro ao adicionar o bloco: ' + error.message);
@@ -91,14 +86,12 @@ export default function AddBlockScreen({ route, navigation }) {
   }
 
   async function editBlock() {
-    const currentDate = new Date();
     setLoading(true);
     try {
       const blockRef = doc(db, 'blocks', blockToEdit!.id);
-      const image = blockImage !== blockToEdit!.image ? await uploadImage(blockImage!, blockToEdit!.index) : blockToEdit!.image;
+      const image = blockImage !== blockToEdit!.image ? await uploadImage(blockImage!, blockToEdit!.id) : blockToEdit!.image;
       await updateDoc(blockRef, {
         name: blockName,
-        index: blockIndex,
         image: image,
         modificationUser: user.uid,
         modificationDate: getCurrentTime()
@@ -118,8 +111,8 @@ export default function AddBlockScreen({ route, navigation }) {
       const blockRef = doc(db, 'blocks', blockToEdit!.id);
       await deleteDoc(blockRef);
     } catch (error) {
-      console.error('Ocorreu um erro ao editar o bloco:', error);
-      alert('Ocorreu um erro ao editar o bloco: ' + error.message);
+      console.error('Ocorreu um erro ao deletar o bloco:', error);
+      alert('Ocorreu um erro ao deletar o bloco: ' + error.message);
     }
     setLoading(false);
     returnToBlocksScreen();
@@ -129,18 +122,11 @@ export default function AddBlockScreen({ route, navigation }) {
     setDeleteBlockModalVisible(prev => !prev);
   }
 
-  async function getNewBlockIndex() {
-    const queryBlocks = await getDocs(collection(db, 'blocks'));
-    const blockNumber : number = queryBlocks.docs.length + 1;
-    return blockNumber;
-  }
-
-  function resetBlockData() {
+  async function resetBlockData() {
     blockToEdit = null;
     setMode('add');
     setBlockImage(null);
     setBlockName('');
-    setBlockIndex(getNewBlockIndex());
   }
 
   function returnToBlocksScreen() {
@@ -148,31 +134,14 @@ export default function AddBlockScreen({ route, navigation }) {
     resetBlockData();
   }
 
-  async function increaseBlockIndex(){
-    let currentBlockIndex = await getNewBlockIndex();
-    if(blockIndex < currentBlockIndex){
-    setBlockIndex(prev => prev + 1);
-    }
-  }
-
-  async function decreaseBlockIndex(){
-    let currentBlockIndex = await blockIndex;
-    if(currentBlockIndex > 1){
-      currentBlockIndex--;
-    setBlockIndex(currentBlockIndex);
-    }
-  }
-
   useEffect(() => {
     if (blockToEdit) {
       setMode('edit');
       setBlockName(blockToEdit.name);
       setBlockImage(blockToEdit.image);
-      setBlockIndex(blockToEdit.index);
-    } else {
-      setBlockIndex(getNewBlockIndex());
-    }
+    } 
   }, []);
+  
 
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flex: 1 }}>
@@ -195,15 +164,6 @@ export default function AddBlockScreen({ route, navigation }) {
                   <MaterialIcons name='photo' color='black' size={96} style={{ marginRight: 12 }} />
                 </View>}
               <DSGovButton primary label={mode == 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
-              <View style={{ display: 'flex', flexDirection: 'row', position: 'absolute', bottom: 0, left: 5, marginBottom: 5, alignItems: 'center' }}>
-                <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16 }}>Bloco {blockIndex}</Text>
-                <Pressable onPress = {increaseBlockIndex}>
-                  <MaterialIcons name='arrow-upward' size={24} style={{ color: 'grey' }} />
-                </Pressable>
-                <Pressable onPress = {decreaseBlockIndex}>
-                  <MaterialIcons name='arrow-downward' size={24} style={{ color: 'grey' }} />
-                </Pressable> 
-              </View>
               {mode == 'edit' ?
                 <Pressable onPress={switchModalVisibility} style={{ position: 'absolute', top: 5, right: 5 }}>
                   <MaterialIcons name='delete-outline' color='#d8504d' size={32} />

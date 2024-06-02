@@ -27,7 +27,6 @@ export default function AddInfoScreen({ route, navigation }) {
   const [infoName, setInfoName] = useState('');
   const [infoDescription, setInfoDescription] = useState('');
   const [infoImage, setInfoImage] = useState<string | null>(null);
-  const [infoIndex, setInfoIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [deleteInfoModalVisible, setDeleteInfoModalVisible] = useState(false);
 
@@ -41,10 +40,10 @@ export default function AddInfoScreen({ route, navigation }) {
     setInfoImage(result.assets![0].uri);
   }
 
-  async function uploadImage(uri: string, infoNumber: number) {
+  async function uploadImage(uri: string, infoId: string) {
     let downloadURL: string | null = null;
     try {
-      const storageRef = ref(getStorage(), `blockImages/${block.image}/infoImages/${infoNumber}`);
+      const storageRef = ref(getStorage(), `blockImages/${block.image}/infoImages/${infoId}`);
       const response = await fetch(uri);
       const blob = await response.blob();
       await uploadBytes(storageRef, blob);
@@ -58,7 +57,7 @@ export default function AddInfoScreen({ route, navigation }) {
   }
 
   async function addInfo() {
-    if(infoName === ''){
+    if (infoName === '') {
       Alert.alert(
         'Aviso',
         'Digite um nome para a informação!'
@@ -76,20 +75,17 @@ export default function AddInfoScreen({ route, navigation }) {
     } else {
       setLoading(true);
       try {
-        const queryInfos = await getDocs(collection(db, 'infos'));
-        const infoNumber = queryInfos.docs.length + 1;
-        const image = await uploadImage(infoImage!, infoNumber);
-        await addDoc(collection(db, 'infos'), {
+        const newInfoRef = await addDoc(collection(db, 'infos'), {
           blockId: block.id,
           name: infoName,
-          index: infoIndex,
-          image: image,
           description: infoDescription,
           creationUser: user.uid,
           modificationUser: user.uid,
           creationDate: getCurrentTime(),
           modificationDate: getCurrentTime()
         });
+        const image = await uploadImage(infoImage!, newInfoRef.id);
+        await updateDoc(newInfoRef, { image: image });
       } catch (error) {
         console.error('Ocorreu um erro ao adicionar a informação:', error);
         alert('Ocorreu um erro ao adicionar a informação: ' + error.message);
@@ -103,10 +99,9 @@ export default function AddInfoScreen({ route, navigation }) {
     setLoading(true);
     try {
       const infoRef = doc(db, 'infos', infoToEdit!.id);
-      const image = infoImage !== infoToEdit!.image ? await uploadImage(infoImage!, infoToEdit!.index) : infoToEdit!.image;
+      const image = infoImage !== infoToEdit!.image ? await uploadImage(infoImage!, infoToEdit!.id) : infoToEdit!.image;
       await updateDoc(infoRef, {
         name: infoName,
-        index: infoIndex,
         image: image,
         description: infoDescription,
         modificationUser: user.uid,
@@ -138,11 +133,6 @@ export default function AddInfoScreen({ route, navigation }) {
     setDeleteInfoModalVisible(prev => !prev);
   }
 
-  async function getNewInfoIndex() {
-    const queryInfos = await getDocs(collection(db, 'infos'));
-    const infoNumber = queryInfos.docs.length + 1;
-    setInfoIndex(infoNumber);
-  }
 
   function resetInfoData() {
     infoToEdit = null;
@@ -150,7 +140,6 @@ export default function AddInfoScreen({ route, navigation }) {
     setInfoImage(null);
     setInfoName('');
     setInfoDescription('');
-    getNewInfoIndex();
   }
 
   function returnToBlockScreen() {
@@ -164,10 +153,7 @@ export default function AddInfoScreen({ route, navigation }) {
       setInfoName(infoToEdit.name);
       setInfoDescription(infoToEdit.description);
       setInfoImage(infoToEdit.image);
-      setInfoIndex(infoToEdit.index);
-    } else {
-      getNewInfoIndex();
-    }
+    } 
   }, []);
 
   return (
@@ -199,7 +185,6 @@ export default function AddInfoScreen({ route, navigation }) {
                   <MaterialIcons name='photo' color='black' size={96} style={{ marginRight: 12 }} />
                 </View>}
               <DSGovButton primary label={mode === 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontSize: 16, position: 'absolute', bottom: 0, left: 5, marginBottom: 5 }}>Informação {infoIndex}</Text>
               {mode === 'edit' ?
                 <Pressable onPress={switchModalVisibility} style={{ position: 'absolute', top: 5, right: 5 }}>
                   <MaterialIcons name='delete-outline' color='#d8504d' size={32} />
