@@ -2,15 +2,17 @@ import { Text, View, SafeAreaView, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { loginStyle } from '../styles/login';
 import { User, UserCredential, createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
-import { db, auth, googleProvider } from '../utils/firebaseconfig';
+import { db, auth, googleProvider } from '../utils/config/firebaseconfig';
 import { Snackbar } from 'react-native-paper';
 import DSGovButton from '../components/button';
 import DSGovInput from '../components/input';
-import UserData from '../utils/userdata';
+import LoginData from '../utils/interfaces/logindata';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import { doc, setDoc } from 'firebase/firestore';
 import LoadingCircle from '../components/loading';
-import getCurrentTime from '../utils/gettime';
+import getCurrentTime from '../utils/functions/gettime';
+import UserData from '../utils/interfaces/userdata';
+import fetchUserData from '../utils/functions/fetchuser';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -29,15 +31,19 @@ export default function RegisterScreen({ navigation }) {
 
         const user: User = UserCredentials.user;
 
-        const userData: UserData = {
+        const loginData: LoginData = {
           uid: user.uid,
           email: user.email,
           displayName: name
         };
 
-        await addUserToDB(userData);
+        await addUserToDB(loginData);
 
+        const userData: UserData | null = await fetchUserData(loginData);
+
+        if(userData){
         navigation.navigate('home', { userData });
+        }
       } catch (error) {
         if (error.code == 'auth/email-already-in-use') {
           setErrorMessage({ errorMessage: 'Email já está em uso!', errorVisible: true });
@@ -49,19 +55,21 @@ export default function RegisterScreen({ navigation }) {
     setLoading(false);
   }
 
-  async function addUserToDB(userData: UserData) {
+  async function addUserToDB(loginData: LoginData) {
     try {
-      const userId = userData.uid;
+      const userId = loginData.uid;
 
       const userRef = doc(db, 'users', userId);
 
       await setDoc(userRef, {
-        name: userData.displayName,
-        email: userData.email,
+        uid: loginData.uid,
+        displayName: loginData.displayName,
+        email: loginData.email,
         type: 'user',
         creationDate: getCurrentTime(),
         modificationDate: getCurrentTime()
-      })
+      });
+
     } catch (error) {
       console.error(error);
     }

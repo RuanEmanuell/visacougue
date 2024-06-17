@@ -1,22 +1,12 @@
 import { Text, View, SafeAreaView, Dimensions, Image } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { Appbar } from 'react-native-paper';
-import Info from '../utils/info';
-import UserData from '../utils/userdata';
-import Block from '../utils/block';
 import DSGovButton from '../components/button';
 
 export default function InfoScreen({ route, navigation }) {
-    const user: UserData = route.params['userData'];
-    const blockData: Block = route.params['blockData'];
     const infoData = route.params['infoData'];
 
-    const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
-
-    const [searchValue, setSearchValue] = useState('');
-    const [blockInfos, setBlockInfos] = useState<Info[]>([]);
-    const [loading, setLoading] = useState(false);
 
     return (
         <View style={{ backgroundColor: '#fff', flex: 1 }}>

@@ -2,12 +2,12 @@ import { Text, View, SafeAreaView, Pressable, Dimensions, FlatList, Image, Keybo
 import React, { useEffect, useState } from 'react';
 import { Appbar, FAB, Icon } from 'react-native-paper';
 import DSGovInput from '../components/input';
-import { db } from '../utils/firebaseconfig';
+import { db } from '../utils/config/firebaseconfig';
 import { collection, getDocs } from 'firebase/firestore';
 import LoadingCircle from '../components/loading';
 import DSGovButton from '../components/button';
-import Block from '../utils/block';
-import UserData from '../utils/userdata';
+import Block from '../utils/interfaces/block';
+import UserData from '../utils/interfaces/userdata';
 
 export default function InfoScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];

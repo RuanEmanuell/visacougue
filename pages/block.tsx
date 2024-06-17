@@ -1,14 +1,14 @@
 import { Text, View, SafeAreaView, Pressable, Dimensions, FlatList, Image, KeyboardAvoidingView, Platform } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Appbar, FAB, Icon } from 'react-native-paper';
 import DSGovInput from '../components/input';
-import { db } from '../utils/firebaseconfig';
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../utils/config/firebaseconfig';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import LoadingCircle from '../components/loading';
 import DSGovButton from '../components/button';
-import Block from '../utils/block';
-import UserData from '../utils/userdata';
-import Info from '../utils/info';
+import Block from '../utils/interfaces/block';
+import UserData from '../utils/interfaces/userdata';
+import Info from '../utils/interfaces/info';
 
 export default function BlockScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];

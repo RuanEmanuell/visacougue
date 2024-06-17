@@ -5,15 +5,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import { db } from '../utils/firebaseconfig';
+import { db } from '../utils/config/firebaseconfig';
 import DSGovInput from '../components/input';
 import DSGovButton from '../components/button';
 import LoadingCircle from '../components/loading';
 import { homeStyle } from '../styles/home';
-import Info from '../utils/info';
-import Block from '../utils/block';
-import UserData from '../utils/userdata';
-import getCurrentTime from '../utils/gettime';
+import Info from '../utils/interfaces/info';
+import Block from '../utils/interfaces/block';
+import UserData from '../utils/interfaces/userdata';
+import getCurrentTime from '../utils/functions/gettime';
 
 export default function AddInfoScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];

@@ -1,6 +1,6 @@
-import { Text, View, SafeAreaView, TextInput, Pressable, Dimensions, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import UserData from '../utils/userdata';
+import { Text, View, SafeAreaView, Dimensions, ScrollView } from 'react-native';
+import React from 'react';
+import UserData from '../utils/interfaces/userdata';
 import { Appbar } from 'react-native-paper';
 import { homeStyle } from '../styles/home';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -9,7 +9,6 @@ import HomeOption from '../components/option';
 export default function HomeScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
 
-  const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
   return (
@@ -22,7 +21,7 @@ export default function HomeScreen({ route, navigation }) {
           <View style={homeStyle.userCircle}>
             <MaterialIcons name='person' size={96} color='black'></MaterialIcons>
           </View>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>{user.email}</Text>
+          <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>{user.displayName}</Text>
           <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center', margin: 10 }}>O que você quer fazer hoje?</Text>
         </View>
         <View style={{ flex: 1, justifyContent: 'space-evenly', display: 'flex', paddingVertical: windowHeight/20}}>

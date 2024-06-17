@@ -1,6 +1,6 @@
 import { SafeAreaView, Dimensions, ScrollView, View, Text, Image, Pressable, Modal, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import UserData from '../utils/userdata';
+import UserData from '../utils/interfaces/userdata';
 import { Appbar, FAB } from 'react-native-paper';
 import { homeStyle } from '../styles/home';
 import DSGovInput from '../components/input';
@@ -8,11 +8,11 @@ import DSGovButton from '../components/button';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
-import { db, storage } from '../utils/firebaseconfig';
+import { db, storage } from '../utils/config/firebaseconfig';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import Block from '../utils/block';
+import Block from '../utils/interfaces/block';
 import LoadingCircle from '../components/loading';
-import getCurrentTime from '../utils/gettime';
+import getCurrentTime from '../utils/functions/gettime';
 
 export default function AddBlockScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
