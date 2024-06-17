@@ -81,7 +81,7 @@ export default function BlockScreen({ route, navigation }) {
                     <DSGovButton
                       primary
                       label='Acessar'
-                      onPress={() => { navigation.push('info', { userData: user, blockData: blockData, infoData: item }) }}
+                      onPress={() => { navigation.push('information', { userData: user, blockData: blockData, infoData: item }) }}
                     />
                   </View>
                   <Pressable onPress={() => { navigation.push('addinfo', { blockData: blockData, userData: user, infoData: item }) }} style={{ position: 'absolute', bottom: 0, right: 5, marginBottom: 5 }}>

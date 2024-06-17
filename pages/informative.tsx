@@ -9,7 +9,7 @@ import DSGovButton from '../components/button';
 import Block from '../utils/interfaces/block';
 import UserData from '../utils/interfaces/userdata';
 
-export default function InfoScreen({ route, navigation }) {
+export default function InformativeScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
 
   const windowWidth = Dimensions.get('window').width;

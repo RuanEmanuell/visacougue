@@ -7,7 +7,7 @@ import InformativeScreen from './pages/informative';
 import AddBlockScreen from './pages/addblock';
 import BlockScreen from './pages/block';
 import AddInfoScreen from './pages/addinfo';
-import InfoScreen from './pages/info';
+import InformationScreen from './pages/information';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -43,8 +43,8 @@ export default function App() {
                     component={AddInfoScreen}
                     options={{ headerShown: false }} />
                 <Stack.Screen
-                    name='info'
-                    component={InfoScreen}
+                    name='information'
+                    component={InformationScreen}
                     options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>

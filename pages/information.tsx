@@ -3,7 +3,7 @@ import React from 'react';
 import { Appbar } from 'react-native-paper';
 import DSGovButton from '../components/button';
 
-export default function InfoScreen({ route, navigation }) {
+export default function InformationScreen({ route, navigation }) {
     const infoData = route.params['infoData'];
 
     const windowHeight = Dimensions.get('window').height;
