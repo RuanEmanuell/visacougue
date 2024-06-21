@@ -8,7 +8,6 @@ export default async function fetchUserData(loginData: LoginData) {
       const queryUser = query(collection(db, 'users'), where('uid', '==', loginData.uid));
       const querySnapshot = await getDocs(queryUser);
       const doc = querySnapshot.docs[0];
-      console.log(doc);
       const userData = {
         uid: doc.data().uid,
         email: doc.data().email,

@@ -11,7 +11,7 @@ interface drawerOptionProps {
 export default function DrawerOption({ label, icon, onPress }: drawerOptionProps) {
     return (
         <Pressable onPress={onPress} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginVertical: 10 }}>
-            <MaterialIcons name={icon} color='black' size={24} style={{ marginLeft: 4 }}></MaterialIcons>
+            <MaterialIcons name={icon} color='black' size={24} style={{ marginLeft: 8 }}></MaterialIcons>
             <Text style={{ fontWeight: 'bold', textAlign: 'center', flex: 1 }}>{label}</Text>
         </Pressable>
     )

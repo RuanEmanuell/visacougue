@@ -31,7 +31,7 @@ export default function HomeScreen({ route, navigation }) {
       </Appbar.Header>
       <CustomDrawer visible={drawerVisible}>
         <DrawerOption label='Informativo' icon='book' onPress={() => navigation.navigate('informative', { userData: user })} />
-        <DrawerOption label='Simulador' icon='computer' onPress={() => {}} />
+        <DrawerOption label='Simulador' icon='computer' onPress={() => { navigation.navigate('simulator', { userData: user }) }} />
         <DrawerOption label='Configurações' icon='settings' onPress={() => {}} />
         <DrawerOption label='Sair' icon= 'logout' onPress={logoutUser} />
       </CustomDrawer>
@@ -45,7 +45,7 @@ export default function HomeScreen({ route, navigation }) {
         </View>
         <View style={{ flex: 1, justifyContent: 'space-evenly', display: 'flex', paddingVertical: windowHeight / 20 }}>
           <HomeOption onPress={() => { navigation.navigate('informative', { userData: user }) }} label="Informativo" color="#0066FF" icon="book" />
-          <HomeOption onPress={() => { }} label="Simulador" color="#CA0000" icon="computer" />
+          <HomeOption onPress={() => { navigation.navigate('simulator', { userData: user }) }} label="Simulador" color="#CA0000" icon="computer" />
           <HomeOption onPress={() => { }} label="Configurações" color="#9E9FA0" icon="settings" />
         </View>
       </SafeAreaView>
