@@ -1,5 +1,5 @@
 import { Text, View, SafeAreaView, TextInput, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loginStyle } from '../styles/login';
 import { User, UserCredential, signInWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
 import { auth, db, googleProvider } from '../utils/config/firebaseconfig';
@@ -12,6 +12,7 @@ import LoadingCircle from '../components/loading';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import UserData from '../utils/interfaces/userdata';
 import fetchUserData from '../utils/functions/fetchuser';
+import { createTables, insertUserData, recoverUserData } from '../utils/functions/dbservice';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -30,10 +31,11 @@ export default function LoginScreen({ navigation }) {
         const loginData: LoginData = {
           uid: user.uid,
           email: user.email,
-          displayName: user.displayName,
+          displayName: user.displayName
         };
         const userData: UserData | null = await fetchUserData(loginData);
         if (userData) {
+          await insertUserData(userData);
           navigation.navigate('home', { userData });
         }
       } catch (error) {
@@ -69,6 +71,20 @@ export default function LoginScreen({ navigation }) {
       return true;
     }
   }
+
+  async function getPreviousUserData() {
+    const userData = await recoverUserData();
+    if (userData) {
+      navigation.navigate('home', { userData });
+    } 
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    createTables();
+    getPreviousUserData();
+    setLoading(false);
+  }, [])
 
   return (
     <SafeAreaView style={loginStyle.container}>
