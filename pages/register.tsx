@@ -1,5 +1,5 @@
 import { Text, View, SafeAreaView, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loginStyle } from '../styles/login';
 import { User, UserCredential, createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
 import { db, auth, googleProvider } from '../utils/config/firebaseconfig';
@@ -13,6 +13,7 @@ import LoadingCircle from '../components/loading';
 import getCurrentTime from '../utils/functions/gettime';
 import UserData from '../utils/interfaces/userdata';
 import fetchUserData from '../utils/functions/fetchuser';
+import { createTable, insertUserData, recoverUserData } from '../utils/functions/dbservice';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -41,8 +42,9 @@ export default function RegisterScreen({ navigation }) {
 
         const userData: UserData | null = await fetchUserData(loginData);
 
-        if(userData){
-        navigation.navigate('home', { userData });
+        if (userData) {
+          await insertUserData(userData);
+          navigation.navigate('home', { userData });
         }
       } catch (error) {
         if (error.code == 'auth/email-already-in-use') {
@@ -102,6 +104,22 @@ export default function RegisterScreen({ navigation }) {
       return true;
     }
   }
+
+
+  async function getPreviousUserData() {
+    setLoading(true);
+    await createTable();
+    const userData = await recoverUserData();
+    if (userData) {
+      navigation.navigate('home', { userData });
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    getPreviousUserData();
+  }, [])
+
   return (
     <SafeAreaView style={loginStyle.container}>
       <View style={loginStyle.logoBox}>
@@ -119,6 +137,7 @@ export default function RegisterScreen({ navigation }) {
           <DSGovInput
             placeholder='Digite seu nome de usuário'
             value={name}
+            maxLength={20}
             onChangeText={text => setName(text)}>
           </DSGovInput>
           <DSGovInput

@@ -7,6 +7,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import HomeOption from '../components/option';
 import CustomDrawer from '../components/drawer';
 import DrawerOption from '../components/draweroption';
+import { removeUserInfo } from '../utils/functions/dbservice';
 
 export default function HomeScreen({ route, navigation }) {
   const user: UserData = route.params['userData'];
@@ -21,6 +22,7 @@ export default function HomeScreen({ route, navigation }) {
 
   function logoutUser(){
     switchDrawerVisibility();
+    removeUserInfo();
     navigation.push('login');
   }
 
