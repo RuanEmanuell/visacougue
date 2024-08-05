@@ -13,7 +13,7 @@ import LoadingCircle from '../components/loading';
 import getCurrentTime from '../utils/functions/gettime';
 import UserData from '../utils/interfaces/userdata';
 import fetchUserData from '../utils/functions/fetchuser';
-import { createTable, insertUserData, recoverUserData } from '../utils/functions/dbservice';
+import { createTables, getUserSettings, insertUserData, recoverUserData } from '../utils/functions/dbservice';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -43,7 +43,9 @@ export default function RegisterScreen({ navigation }) {
         const userData: UserData | null = await fetchUserData(loginData);
 
         if (userData) {
-          await insertUserData(userData);
+          if (await getUserSettings() == true) {
+            await insertUserData(userData);
+          }
           navigation.navigate('home', { userData });
         }
       } catch (error) {
@@ -108,7 +110,7 @@ export default function RegisterScreen({ navigation }) {
 
   async function getPreviousUserData() {
     setLoading(true);
-    await createTable();
+    await createTables();
     const userData = await recoverUserData();
     if (userData) {
       navigation.navigate('home', { userData });

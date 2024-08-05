@@ -12,7 +12,7 @@ import LoadingCircle from '../components/loading';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import UserData from '../utils/interfaces/userdata';
 import fetchUserData from '../utils/functions/fetchuser';
-import { createTable, insertUserData, recoverUserData } from '../utils/functions/dbservice';
+import { createTables, getUserSettings, insertUserData, recoverUserData } from '../utils/functions/dbservice';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -35,7 +35,9 @@ export default function LoginScreen({ navigation }) {
         };
         const userData: UserData | null = await fetchUserData(loginData);
         if (userData) {
-          await insertUserData(userData);
+          if (await getUserSettings() == true) {
+            await insertUserData(userData);
+          }
           navigation.navigate('home', { userData });
         }
       } catch (error) {
@@ -74,7 +76,7 @@ export default function LoginScreen({ navigation }) {
 
   async function getPreviousUserData() {
     setLoading(true);
-    await createTable();
+    await createTables();
     const userData = await recoverUserData();
     if (userData) {
       navigation.navigate('home', { userData });

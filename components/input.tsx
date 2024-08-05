@@ -13,7 +13,7 @@ interface inputProps {
 }
 
 export default function DSGovInput({ onChangeText, secureTextEntry, placeholder, value, multiline, textAlign, maxLength }: inputProps) {
-    const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry ? !secureTextEntry : false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry ? secureTextEntry : false);
 
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', borderColor: 'black', borderWidth: 1, borderRadius: 5, width: '75%', marginTop: 16 }}>

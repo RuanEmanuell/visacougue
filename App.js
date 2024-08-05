@@ -9,6 +9,7 @@ import BlockScreen from './pages/block';
 import AddInfoScreen from './pages/addinfo';
 import InformationScreen from './pages/information';
 import SimulatorScreen from './pages/simulator';
+import SettingsScreen from './pages/settings';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -50,6 +51,10 @@ export default function App() {
                 <Stack.Screen
                     name='simulator'
                     component={SimulatorScreen}
+                    options={{ headerShown: false }} />
+                <Stack.Screen
+                    name='settings'
+                    component={SettingsScreen}
                     options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
