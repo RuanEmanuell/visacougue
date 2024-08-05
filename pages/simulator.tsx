@@ -66,7 +66,7 @@ export default function SimulatorScreen({ route, navigation }) {
     return (
         <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flexGrow: 1 }} ref={scrollRef}>
             <Appbar.Header style={{ backgroundColor: '#fff' }}>
-                <Appbar.Action icon='arrow-left' onPress={() => { navigation.navigate('home', { userData: user }) }} />
+                <Appbar.Action icon='arrow-left' onPress={() => { navigation.push('home', { userData: user }) }} />
                 <Appbar.Content title='Simulador' titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
             </Appbar.Header>
             <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', alignItems: 'center', width: '100%' }}>
