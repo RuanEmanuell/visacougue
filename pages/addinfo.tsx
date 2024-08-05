@@ -133,7 +133,6 @@ export default function AddInfoScreen({ route, navigation }) {
     setDeleteInfoModalVisible(prev => !prev);
   }
 
-
   function resetInfoData() {
     infoToEdit = null;
     setMode('add');
@@ -153,19 +152,19 @@ export default function AddInfoScreen({ route, navigation }) {
       setInfoName(infoToEdit.name);
       setInfoDescription(infoToEdit.description);
       setInfoImage(infoToEdit.image);
-    } 
+    }
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={{ backgroundColor: '#fff', flex: 1 }}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <Appbar.Header style={{ backgroundColor: '#fff' }}>
         <Appbar.Action icon='arrow-left' onPress={returnToBlockScreen} />
         <Appbar.Content title={mode === 'add' ? 'Adicionar Informação' : 'Editar Informação'} titleStyle={{ textAlign: 'center', fontWeight: 'bold' }} />
       </Appbar.Header>
       <SafeAreaView style={homeStyle.container}>
         {!loading ?
-          <>
-            <View style={{ borderColor: 'black', borderWidth: 3, width: windowWidth / 1.1, height: 'auto', display: 'flex', alignItems: 'center', paddingTop: 10 }}>
+          <View style={{ paddingHorizontal: 10, paddingBottom: 20 }}>
+            <View style={{ borderColor: 'black', borderWidth: 3, width: windowWidth / 1.1, paddingVertical: 10, paddingHorizontal: 5, alignItems: 'center' }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Nome da Informação:</Text>
               <DSGovInput
                 placeholder='Digite o nome da informação...'
@@ -178,43 +177,42 @@ export default function AddInfoScreen({ route, navigation }) {
                 value={infoDescription}
                 onChangeText={(text) => { setInfoDescription(text) }}
                 multiline
-                textAlign='star'
+                textAlign='start'
               />
-              {infoImage ? <Image source={{ uri: infoImage }} style={{ marginTop: windowHeight / 50, width: '66%', height: '30%', resizeMode: 'contain' }} /> :
-                <View style={{ marginTop: windowHeight / 50, backgroundColor: 'lightgray', width: '66%', height: '30%', justifyContent: 'center', alignItems: 'center' }}>
+              {infoImage ? (
+                <Image source={{ uri: infoImage }} style={{ marginTop: windowHeight / 50, width: windowWidth / 1.5, height: windowHeight / 4, resizeMode: 'contain' }} />
+              ) : (
+                <View style={{ marginTop: windowHeight / 50, backgroundColor: 'lightgray', width: windowWidth / 1.5, height: windowHeight / 4, justifyContent: 'center', alignItems: 'center' }}>
                   <MaterialIcons name='photo' color='black' size={96} style={{ marginRight: 12 }} />
-                </View>}
+                </View>
+              )}
               <DSGovButton primary label={mode === 'add' ? 'Adicionar imagem' : 'Editar imagem'} onPress={pickImage} />
-              {mode === 'edit' ?
+              {mode === 'edit' && (
                 <Pressable onPress={switchModalVisibility} style={{ position: 'absolute', top: 5, right: 5 }}>
                   <MaterialIcons name='delete-outline' color='#d8504d' size={32} />
-                </Pressable> : <></>}
+                </Pressable>
+              )}
             </View>
             <FAB
-              style={{ backgroundColor: '#1351B4', position: 'absolute', bottom: 0, alignSelf: 'center', marginBottom: 20 }}
+              style={{
+                backgroundColor: '#1351B4',
+                position: 'absolute',
+                bottom: -10,
+                alignSelf: 'center',
+              }}
               color='white'
               icon='content-save'
               onPress={mode === 'add' ? addInfo : editInfo}
             />
-          </>
+          </View>
           : <LoadingCircle />}
       </SafeAreaView>
       <Modal visible={deleteInfoModalVisible} transparent={true}>
         <View style={{ backgroundColor: 'rgba(135, 132, 133, 0.66)', flex: 1, justifyContent: 'center' }}>
-          <View style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, display: 'flex', alignItems: 'center', paddingVertical: 20, paddingHorizontal: 10, marginHorizontal: 10 }}>
+          <View style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, alignItems: 'center', paddingVertical: 20, paddingHorizontal: 10, marginHorizontal: 10 }}>
             <Text style={{ textAlign: 'center' }}>Deseja mesmo apagar essa informação?</Text>
-            <DSGovButton
-              primary
-              label='Sim'
-              onPress={deleteInfo}
-              block
-            />
-            <DSGovButton
-              label='Não'
-              secondary
-              onPress={switchModalVisibility}
-              block
-            />
+            <DSGovButton primary label='Sim' onPress={deleteInfo} block />
+            <DSGovButton label='Não' secondary onPress={switchModalVisibility} block />
           </View>
         </View>
       </Modal>

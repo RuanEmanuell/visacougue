@@ -6,8 +6,6 @@ import { saveUserSettings, getUserSettings, removeUserInfo } from '../utils/func
 
 export default function SettingsScreen({ navigation }) {
   const [saveLoginData, setSaveLoginData] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-
 
   async function fetchSettings() {
     const savedLoginData = await getUserSettings();
