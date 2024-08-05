@@ -112,12 +112,8 @@ export default function LoginScreen({ navigation }) {
             <Text style={{ paddingHorizontal: '5%', color: 'gray' }}>ou</Text>
             <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
           </View>
-          <View style={{ margin: 16 }}>
-            <FontAwesome.Button name='google' style={{ paddingVertical: 16 }} onPress={loginGoogle}>Entrar com Google</FontAwesome.Button>
-          </View>
-          <Pressable onPress={() => { navigation.navigate('register'); }}>
-            <Text style={{ color: '#1351B4', fontWeight: 'bold' }}>Ainda não tem uma conta? Criar uma conta</Text>
-          </Pressable>
+          <Text style={{ color: '#1351B4', fontWeight: 'bold', margin: 16 }}>Ainda não tem uma conta?</Text>
+          <FontAwesome.Button name='sign-in' style={{ paddingVertical: 16 }} onPress={() => { navigation.navigate('register'); }}>Criar uma conta</FontAwesome.Button>
           <Snackbar
             visible={errorMessage.errorVisible}
             onDismiss={() => setErrorMessage({ errorMessage: "", errorVisible: false })}

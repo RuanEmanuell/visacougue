@@ -158,12 +158,8 @@ export default function RegisterScreen({ navigation }) {
             <Text style={{ paddingHorizontal: '5%', color: 'gray' }}>ou</Text>
             <View style={{ width: '40%', backgroundColor: 'gray', height: 2 }}></View>
           </View>
-          <View style={{ margin: 16 }}>
-            <FontAwesome.Button name='google' style={{ paddingVertical: 16 }} onPress={loginGoogle}>Criar com Google</FontAwesome.Button>
-          </View>
-          <Pressable onPress={() => { navigation.navigate('login'); }}>
-            <Text style={{ color: '#1351B4', fontWeight: 'bold' }}>Já tem uma conta? Fazer login</Text>
-          </Pressable>
+          <Text style={{ color: '#1351B4', fontWeight: 'bold', margin: 16 }}>Já tem uma conta?</Text>
+          <FontAwesome.Button name='sign-in' style={{ paddingVertical: 16 }} onPress={() => { navigation.navigate('login'); }}>Fazer login</FontAwesome.Button>
           <Snackbar
             visible={errorMessage.errorVisible}
             onDismiss={() => setErrorMessage({ errorMessage: "", errorVisible: false })}

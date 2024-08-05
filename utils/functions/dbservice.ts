@@ -7,6 +7,7 @@ export async function createTable() {
     const userInfoDB = await SQLite.openDatabaseAsync('userdata.db', {
         useNewConnection: true
     });
+
     try {
         await userInfoDB.execAsync(
             'CREATE TABLE IF NOT EXISTS userData (uid VARCHAR(128) PRIMARY KEY NOT NULL, email VARCHAR(320) NOT NULL, displayName VARCHAR(20) NOT NULL);'
@@ -20,6 +21,7 @@ export async function removeUserInfo() {
     const userInfoDB = await SQLite.openDatabaseAsync('userdata.db', {
         useNewConnection: true
     });
+
     try {
         await userInfoDB.execAsync('DELETE FROM userData');
         console.log('Dados do usuário deletados com sucesso.');
@@ -30,6 +32,7 @@ export async function removeUserInfo() {
 
 export async function recoverUserData() {
     const userInfoDB = await SQLite.openDatabaseAsync('userdata.db');
+
     try {
         const result: LoginData | null = await userInfoDB.getFirstAsync(
             'SELECT * FROM userData'
@@ -56,6 +59,7 @@ export async function insertUserData(userData: UserData) {
     const statement = await userInfoDB.prepareAsync(
         'INSERT INTO userData (uid, email, displayName) VALUES ($uidValue, $emailValue, $displayNameValue);'
     );
+    
     try {
         console.log('Inserting user data:', userData);
 
