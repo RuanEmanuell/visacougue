@@ -30,7 +30,7 @@ export default function SettingsScreen({ navigation }) {
         <Appbar.Action icon='arrow-left' onPress={() => navigation.goBack()} />
         <Appbar.Content title="Configurações" />
       </Appbar.Header>
-      <SafeAreaView style={{ flex: 1, padding: 20 }}>
+      <SafeAreaView style={{ flex: 1, padding: 20, margin: 20}}>
        <View style={{ marginBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Salvar dados de login</Text>
           <Switch

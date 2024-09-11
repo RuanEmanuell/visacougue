@@ -23,7 +23,13 @@
         "backgroundColor": "#ffffff"
       },
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.ruanemanuell.visacougue"
+      "package": "com.ruanemanuell.visacougue",
+      "buildProperties": {
+        "compileSdkVersion": 33,
+        "targetSdkVersion": 33,
+        "minSdkVersion": 21,
+        "javaVersion": "11"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
