@@ -46,7 +46,7 @@ export default function AddBlockScreen({ route, navigation }) {
       await uploadBytes(storageRef, blob);
 
       downloadURL = await getDownloadURL(storageRef);
-    } catch (error) {
+    } catch (error : any) {
       console.error('Ocorreu um erro:', error);
       alert('Ocorreu um erro: ' + error.message);
     }
@@ -76,7 +76,7 @@ export default function AddBlockScreen({ route, navigation }) {
         });
         const image = await uploadImage(blockImage!, newBlockRef.id);
         await updateDoc(newBlockRef, { image: image });
-      } catch (error) {
+      } catch (error : any) {
         console.error('Ocorreu um erro ao adicionar o bloco:', error);
         alert('Ocorreu um erro ao adicionar o bloco: ' + error.message);
       }
@@ -96,7 +96,7 @@ export default function AddBlockScreen({ route, navigation }) {
         modificationUser: user.uid,
         modificationDate: getCurrentTime()
       });
-    } catch (error) {
+    } catch (error : any) {
       console.error('Ocorreu um erro ao editar o bloco:', error);
       alert('Ocorreu um erro ao editar o bloco: ' + error.message);
     }
@@ -110,7 +110,7 @@ export default function AddBlockScreen({ route, navigation }) {
     try {
       const blockRef = doc(db, 'blocks', blockToEdit!.id);
       await deleteDoc(blockRef);
-    } catch (error) {
+    } catch (error : any) {
       console.error('Ocorreu um erro ao deletar o bloco:', error);
       alert('Ocorreu um erro ao deletar o bloco: ' + error.message);
     }

@@ -55,7 +55,7 @@ export default function HomeScreen({ route, navigation }) {
       const downloadURL = await getDownloadURL(storageRef);
       console.log('File available at', downloadURL);
       setImage(downloadURL);
-    } catch (error) {
+    } catch (error : any) {
       console.error('Ocorreu um erro:', error);
       alert('Ocorreu um erro: ' + error.message);
     }

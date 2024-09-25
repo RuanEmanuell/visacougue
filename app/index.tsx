@@ -14,7 +14,7 @@ import SettingsScreen from './pages/settings';
 export default function App() {
     const Stack = createNativeStackNavigator();
     return (
-        <NavigationContainer>
+        <NavigationContainer independent = {true}>
             <Stack.Navigator>
                 <Stack.Screen
                     name='login'

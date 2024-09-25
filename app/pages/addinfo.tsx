@@ -49,7 +49,7 @@ export default function AddInfoScreen({ route, navigation }) {
       await uploadBytes(storageRef, blob);
 
       downloadURL = await getDownloadURL(storageRef);
-    } catch (error) {
+    } catch (error : any) {
       console.error('Ocorreu um erro:', error);
       alert('Ocorreu um erro: ' + error.message);
     }
@@ -86,7 +86,7 @@ export default function AddInfoScreen({ route, navigation }) {
         });
         const image = await uploadImage(infoImage!, newInfoRef.id);
         await updateDoc(newInfoRef, { image: image });
-      } catch (error) {
+      } catch (error : any) {
         console.error('Ocorreu um erro ao adicionar a informação:', error);
         alert('Ocorreu um erro ao adicionar a informação: ' + error.message);
       }
@@ -107,7 +107,7 @@ export default function AddInfoScreen({ route, navigation }) {
         modificationUser: user.uid,
         modificationDate: getCurrentTime()
       });
-    } catch (error) {
+    } catch (error : any) {
       console.error('Ocorreu um erro ao editar a informação:', error);
       alert('Ocorreu um erro ao editar a informação: ' + error.message);
     }
@@ -121,7 +121,7 @@ export default function AddInfoScreen({ route, navigation }) {
     try {
       const infoRef = doc(db, 'infos', infoToEdit!.id);
       await deleteDoc(infoRef);
-    } catch (error) {
+    } catch (error : any) {
       console.error('Ocorreu um erro ao deletar a informação:', error);
       alert('Ocorreu um erro ao deletar a informação: ' + error.message);
     }
